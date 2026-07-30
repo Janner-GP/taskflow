@@ -1,0 +1,24 @@
+{
+  "errors": {
+    "VALIDATION_ERROR": "Los datos enviados no son válidos.",
+    "INVALID_CREDENTIALS": "Correo o contraseña incorrectos.",
+    "UNAUTHENTICATED": "No hay una sesión válida.",
+    "CSRF_TOKEN_INVALID": "Tu sesión ha caducado. Recarga la página e inténtalo de nuevo.",
+    "FORBIDDEN": "No tienes permiso para realizar esta acción.",
+    "NOT_FOUND": "El recurso solicitado no existe.",
+    "TASK_NOT_FOUND": "La tarea no existe.",
+    "METHOD_NOT_ALLOWED": "Método no permitido para esta ruta.",
+    "EMAIL_ALREADY_EXISTS": "Ya existe una cuenta con ese correo electrónico.",
+    "CONFLICT": "La petición entra en conflicto con el estado actual del recurso.",
+    "PAYLOAD_TOO_LARGE": "El contenido enviado es demasiado grande.",
+    "UNSUPPORTED_MEDIA_TYPE": "Tipo de contenido no soportado.",
+    "TOO_MANY_REQUESTS": "Demasiadas peticiones. Inténtalo de nuevo en unos segundos.",
+    "INTERNAL_ERROR": "Ha ocurrido un error inesperado."
+  },
+  "tasks": {
+    "created": "Tarea creada correctamente.",
+    "updated": "Tarea actualizada correctamente.",
+    "deleted": "Tarea eliminada correctamente.",
+    "attachmentUploaded": "Imagen adjuntada correctamente."
+  }
+}

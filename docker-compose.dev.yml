@@ -1,0 +1,43 @@
+# ===========================================================================
+# LOOP DE DESARROLLO RÁPIDO
+#
+#   docker compose -f docker-compose.dev.yml up
+#
+# Levanta solo la infraestructura.  Web y mobile se corren nativos
+# (`ng serve` / `ionic serve`) porque el dev server de Angular dentro de un
+# contenedor en Windows pierde los eventos de file watching sobre bind mounts
+# y hay que caer en polling: el HMR pasa de milisegundos a segundos.
+#
+# Para el stack completo dockerizado usa `docker compose up` (docker-compose.yml).
+# ===========================================================================
+
+name: taskflow-dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: taskflow-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-taskflow}
+      POSTGRES_USER: ${POSTGRES_USER:-taskflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD es obligatorio - copia .env.example a .env}
+    ports:
+      # Ligado a loopback a propósito: accesible para psql/Prisma Studio en tu
+      # máquina, invisible para la red. En producción este servicio NO publica
+      # ningún puerto (ver docker-compose.prod.yml).
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # Con -U y -d explícitos: sin ellos pg_isready usa el usuario del SO y
+      # reporta "ready" antes de que la base de la app exista de verdad.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskflow} -d ${POSTGRES_DB:-taskflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres-data:
+    name: taskflow-postgres-data-dev

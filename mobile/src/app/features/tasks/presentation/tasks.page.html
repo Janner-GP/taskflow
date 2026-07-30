@@ -1,0 +1,92 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ 'shell.tabs.tasks' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreate()">
+        <ion-icon slot="icon-only" name="add-outline" aria-hidden="true" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="filter().status ?? ''" (ionChange)="onStatusChange($event)">
+      <ion-segment-button value="">{{ 'tasks.filters.all' | translate }}</ion-segment-button>
+      <ion-segment-button value="PENDING">{{ 'status.PENDING' | translate }}</ion-segment-button>
+      <ion-segment-button value="COMPLETED">{{ 'status.COMPLETED' | translate }}</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-select
+      [value]="filter().priority ?? ''"
+      (ionChange)="onPriorityChange($event)"
+      interface="popover"
+      class="ion-padding-horizontal"
+      [label]="'tasks.filters.priority' | translate"
+    >
+      <ion-select-option value="">{{ 'tasks.filters.allPriorities' | translate }}</ion-select-option>
+      @for (p of priorities; track p) {
+        <ion-select-option [value]="p">{{ 'priority.' + p | translate }}</ion-select-option>
+      }
+    </ion-select>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+
+  @if (error()) {
+    <div class="ion-padding flex flex-col items-center gap-2">
+      <ion-note color="danger">{{ 'errors.unexpected' | translate }}</ion-note>
+      <ion-button size="small" fill="outline" (click)="retry()">
+        {{ 'common.retry' | translate }}
+      </ion-button>
+    </div>
+  }
+
+  @if (!loading() && !error() && tasks().length === 0) {
+    <div class="ion-padding flex flex-col items-center gap-2 pt-12">
+      <ion-icon name="checkmark-circle-outline" class="text-content-muted text-4xl" aria-hidden="true" />
+      <p class="text-content-muted text-sm">{{ 'tasks.empty' | translate }}</p>
+    </div>
+  }
+
+  <ion-list>
+    @for (task of tasks(); track task.id) {
+      <ion-item-sliding>
+        <ion-item>
+          <span
+            class="priority-dot"
+            [style.background-color]="priorityColor(task.priority)"
+            aria-hidden="true"
+          ></span>
+          <ion-label class="ion-text-wrap">
+            <h2 [class.completed]="task.status === 'COMPLETED'">{{ task.title }}</h2>
+            @if (task.dueDate) {
+              <p class="text-content-muted text-xs">{{ task.dueDate | date: 'mediumDate' }}</p>
+            }
+            @if (task.attachmentUrl) {
+              <img [src]="task.attachmentUrl" style="max-height:80px; border-radius:4px; margin-top:4px">
+            }
+          </ion-label>
+          <ion-badge slot="end" [color]="statusColor(task.status)">
+            {{ 'status.' + task.status | translate }}
+          </ion-badge>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option [color]="task.status === 'COMPLETED' ? 'medium' : 'success'" (click)="toggle(task)">
+            <ion-icon slot="icon-only" name="checkmark-outline" aria-hidden="true" />
+          </ion-item-option>
+          <ion-item-option color="primary" (click)="openEdit(task)">
+            <ion-icon slot="icon-only" name="create-outline" aria-hidden="true" />
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="confirmDelete(task)">
+            <ion-icon slot="icon-only" name="trash-outline" aria-hidden="true" />
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    }
+  </ion-list>
+
+  <app-create-task-modal [isOpen]="showCreate()" [task]="editing()" (closed)="closeModal()" />
+</ion-content>

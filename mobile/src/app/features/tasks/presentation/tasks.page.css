@@ -1,0 +1,12 @@
+.priority-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  margin-inline-end: 12px;
+  flex-shrink: 0;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: var(--tf-text-muted);
+}

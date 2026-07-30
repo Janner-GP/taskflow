@@ -1,0 +1,78 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">
+  <div class="flex flex-col gap-2">
+    <label for="task-title" class="text-sm font-medium">{{ 'tasks.form.fields.title' | translate }}</label>
+    <input pInputText id="task-title" formControlName="title" class="w-full" />
+    @if (errorKey(form.controls.title); as key) {
+      <small class="text-sm text-red-600 dark:text-red-400">{{ key | translate }}</small>
+    }
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="task-description" class="text-sm font-medium">{{ 'tasks.form.fields.description' | translate }}</label>
+    <textarea pTextarea id="task-description" formControlName="description" rows="3" class="w-full"></textarea>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label for="task-priority" class="text-sm font-medium">{{ 'tasks.form.fields.priority' | translate }}</label>
+      <p-select
+        inputId="task-priority"
+        formControlName="priority"
+        styleClass="w-full"
+        appendTo="body"
+        [options]="priorities"
+        optionLabel="labelKey"
+        optionValue="value"
+      >
+        <ng-template #selectedItem let-option>
+          {{ option.labelKey | translate }}
+        </ng-template>
+        <ng-template #item let-option>
+          {{ option.labelKey | translate }}
+        </ng-template>
+      </p-select>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="task-due-date" class="text-sm font-medium">{{ 'tasks.form.fields.dueDate' | translate }}</label>
+      <p-datepicker
+        inputId="task-due-date"
+        formControlName="dueDate"
+        styleClass="w-full"
+        appendTo="body"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        [showClear]="true"
+      />
+    </div>
+  </div>
+
+  <div>
+    <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileChange($event)" hidden>
+    <p-button
+      type="button"
+      [label]="'tasks.form.attachImage' | translate"
+      icon="pi pi-image"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      (onClick)="fileInput.click()"
+    />
+    @if (attachmentFile()) {
+      <div style="margin-top:0.5rem">
+        <img [src]="previewUrl()" alt="preview" style="max-height:120px; border-radius:6px;">
+      </div>
+    }
+  </div>
+
+  <div class="mt-2 flex justify-end gap-3">
+    <p-button
+      type="button"
+      [label]="'common.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="cancelled.emit()"
+    />
+    <p-button type="submit" [label]="'common.save' | translate" [loading]="saving()" />
+  </div>
+</form>

@@ -1,0 +1,14 @@
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("tsf_priority")
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+
+  @@map("tsf_task_status")
+}

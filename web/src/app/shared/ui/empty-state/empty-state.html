@@ -1,0 +1,23 @@
+<div class="flex flex-col items-center gap-3 rounded-card border border-dashed border-surface px-6 py-14 text-center">
+  <svg
+    class="size-10 text-muted-color"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M3 10.5 5.5 4h13l2.5 6.5M3 10.5v7A1.5 1.5 0 0 0 4.5 19h15a1.5 1.5 0 0 0 1.5-1.5v-7M3 10.5h5.25a.75.75 0 0 1 .75.75v.5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-.5a.75.75 0 0 1 .75-.75H21"
+    />
+  </svg>
+  <p class="text-lg font-medium">{{ title() }}</p>
+  @if (message()) {
+    <p class="max-w-sm text-sm text-muted-color">{{ message() }}</p>
+  }
+  @if (actionLabel()) {
+    <p-button [label]="actionLabel()" styleClass="mt-2" (onClick)="action.emit()" />
+  }
+</div>

@@ -1,0 +1,24 @@
+{
+  "errors": {
+    "VALIDATION_ERROR": "The submitted data is not valid.",
+    "INVALID_CREDENTIALS": "Wrong email or password.",
+    "UNAUTHENTICATED": "No valid session.",
+    "CSRF_TOKEN_INVALID": "Your session has expired. Reload the page and try again.",
+    "FORBIDDEN": "You do not have permission to perform this action.",
+    "NOT_FOUND": "The requested resource does not exist.",
+    "TASK_NOT_FOUND": "The task does not exist.",
+    "METHOD_NOT_ALLOWED": "Method not allowed for this route.",
+    "EMAIL_ALREADY_EXISTS": "An account with that email already exists.",
+    "CONFLICT": "The request conflicts with the current state of the resource.",
+    "PAYLOAD_TOO_LARGE": "The submitted content is too large.",
+    "UNSUPPORTED_MEDIA_TYPE": "Unsupported content type.",
+    "TOO_MANY_REQUESTS": "Too many requests. Try again in a few seconds.",
+    "INTERNAL_ERROR": "An unexpected error occurred."
+  },
+  "tasks": {
+    "created": "Task created successfully.",
+    "updated": "Task updated successfully.",
+    "deleted": "Task deleted successfully.",
+    "attachmentUploaded": "Image attached successfully."
+  }
+}

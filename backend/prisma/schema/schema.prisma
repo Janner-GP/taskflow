@@ -1,0 +1,30 @@
+// TaskFlow — esquema de datos
+//
+// Convenciones:
+//  - Los ids son uuid generados por la base de datos.
+//  - De los refresh tokens se guarda SOLO el hash (`tokenHash`), nunca el token
+//    en claro: si la base de datos se filtra, los tokens no son reutilizables.
+//  - Los índices de `Task` son compuestos y empiezan siempre por `userId`
+//    porque toda consulta de tareas está acotada al dueño.
+//
+// Prisma 7 ya NO admite `url` dentro de `datasource`: la URL de migraciones vive
+// en `prisma.config.ts` y el cliente se conecta con un driver adapter
+// (ver `src/shared/infrastructure/prisma/prisma.service.ts`).
+//
+// CONVENCIÓN DE NOMBRES FÍSICOS
+// Todo objeto de base de datos lleva el prefijo `tsf_` (tablas y tipos enum) vía
+// `@@map`. El objetivo es que el esquema sea reconocible como de TaskFlow si la
+// base llega a compartirse con otras aplicaciones.
+//
+// Los nombres del MODELO siguen siendo idiomáticos (`User`, `Task`): `@@map`
+// desacopla el nombre físico del lógico, así que el dominio y los casos de uso
+// nunca ven el prefijo. Es exactamente la razón por la que Prisma vive detrás de
+// puertos en `infrastructure/`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}

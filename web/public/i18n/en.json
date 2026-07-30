@@ -1,0 +1,141 @@
+{
+  "shell": {
+    "nav": {
+      "tasks": "Tasks",
+      "login": "Sign in"
+    },
+    "toggleTheme": "Toggle light/dark theme",
+    "logout": "Sign out",
+    "footer": "TaskFlow — full stack technical test."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading…",
+    "edit": "Edit",
+    "delete": "Delete",
+    "retry": "Retry",
+    "all": "All",
+    "toast": {
+      "success": "Done",
+      "successDetail": "Operation completed.",
+      "error": "Something went wrong",
+      "errorDetail": "The operation could not be completed. Please try again."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to manage your tasks.",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account yet?",
+      "registerLink": "Create one"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "One minute and you are organised.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Your name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "you@email.com"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "••••••••",
+        "hint": "At least 8 characters, one uppercase letter and one digit."
+      }
+    },
+    "session": {
+      "expiredTitle": "Session expired",
+      "expiredDetail": "Please sign in again to continue."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address.",
+      "minlength": "Too short.",
+      "passwordMinLength": "The password needs at least 8 characters.",
+      "passwordUppercase": "The password needs at least one uppercase letter.",
+      "passwordDigit": "The password needs at least one digit.",
+      "invalid": "Invalid value.",
+      "codes": {
+        "INVALID_CREDENTIALS": "Wrong email or password.",
+        "EMAIL_ALREADY_EXISTS": "An account with that email already exists.",
+        "VALIDATION_ERROR": "Please review the submitted data.",
+        "TOO_MANY_REQUESTS": "Too many attempts. Wait a moment and try again.",
+        "CSRF_TOKEN_INVALID": "Your session expired. Reload the page and try again.",
+        "NETWORK_ERROR": "Could not reach the server.",
+        "UNEXPECTED": "Something went wrong. Please try again."
+      }
+    }
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Organise your work and keep the important things in sight.",
+    "newTask": "New task",
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "COMPLETED": "Completed"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by title…",
+      "status": "Status",
+      "priority": "Priority",
+      "clear": "Clear filters"
+    },
+    "item": {
+      "noDueDate": "No due date",
+      "dueDate": "Due {{ date }}",
+      "toggleAria": "Toggle task status",
+      "completeAria": "Mark as completed",
+      "reopenAria": "Reopen task"
+    },
+    "form": {
+      "createTitle": "New task",
+      "editTitle": "Edit task",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "priority": "Priority",
+        "dueDate": "Due date"
+      },
+      "errors": {
+        "required": "This field is required.",
+        "invalid": "Invalid value."
+      }
+    },
+    "delete": {
+      "header": "Delete task",
+      "message": "Are you sure you want to delete “{{ title }}”? This action cannot be undone.",
+      "confirm": "Delete"
+    },
+    "states": {
+      "emptyTitle": "No tasks yet",
+      "emptyMessage": "Create your first task to get organised.",
+      "emptyFilteredTitle": "No results",
+      "emptyFilteredMessage": "No task matches the applied filters.",
+      "errorMessage": "Tasks could not be loaded."
+    },
+    "toasts": {
+      "created": "Task created.",
+      "updated": "Task updated.",
+      "deleted": "Task deleted.",
+      "completed": "Task completed.",
+      "reopened": "Task reopened.",
+      "errorSummary": "Something went wrong",
+      "errorDetail": "The operation could not be completed. Please try again."
+    }
+  }
+}

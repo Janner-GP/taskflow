@@ -1,0 +1,141 @@
+{
+  "shell": {
+    "nav": {
+      "tasks": "Tareas",
+      "login": "Entrar"
+    },
+    "toggleTheme": "Cambiar tema claro/oscuro",
+    "logout": "Salir",
+    "footer": "TaskFlow — prueba técnica full stack."
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "loading": "Cargando…",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "retry": "Reintentar",
+    "all": "Todas",
+    "toast": {
+      "success": "Listo",
+      "successDetail": "Operación completada.",
+      "error": "Algo salió mal",
+      "errorDetail": "No se pudo completar la operación. Inténtalo de nuevo."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Entra para gestionar tus tareas.",
+      "submit": "Entrar",
+      "noAccount": "¿Aún no tienes cuenta?",
+      "registerLink": "Crear una"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Un minuto y empiezas a organizarte.",
+      "submit": "Crear cuenta",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "loginLink": "Inicia sesión"
+    },
+    "fields": {
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Tu nombre"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "tu@correo.com"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "••••••••",
+        "hint": "Mínimo 8 caracteres, con una mayúscula y un dígito."
+      }
+    },
+    "session": {
+      "expiredTitle": "Sesión expirada",
+      "expiredDetail": "Vuelve a iniciar sesión para continuar."
+    },
+    "errors": {
+      "required": "Este campo es obligatorio.",
+      "email": "Introduce un correo electrónico válido.",
+      "minlength": "Demasiado corto.",
+      "passwordMinLength": "La contraseña necesita al menos 8 caracteres.",
+      "passwordUppercase": "La contraseña necesita al menos una mayúscula.",
+      "passwordDigit": "La contraseña necesita al menos un dígito.",
+      "invalid": "Valor no válido.",
+      "codes": {
+        "INVALID_CREDENTIALS": "Correo o contraseña incorrectos.",
+        "EMAIL_ALREADY_EXISTS": "Ya existe una cuenta con ese correo electrónico.",
+        "VALIDATION_ERROR": "Revisa los datos introducidos.",
+        "TOO_MANY_REQUESTS": "Demasiados intentos. Espera un momento y vuelve a probar.",
+        "CSRF_TOKEN_INVALID": "Tu sesión ha caducado. Recarga la página e inténtalo de nuevo.",
+        "NETWORK_ERROR": "No se pudo conectar con el servidor.",
+        "UNEXPECTED": "Ha ocurrido un error inesperado. Inténtalo de nuevo."
+      }
+    }
+  },
+  "tasks": {
+    "title": "Tareas",
+    "subtitle": "Organiza tu trabajo y no pierdas de vista lo importante.",
+    "newTask": "Nueva tarea",
+    "priority": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "COMPLETED": "Completada"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar por título…",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "clear": "Limpiar filtros"
+    },
+    "item": {
+      "noDueDate": "Sin fecha límite",
+      "dueDate": "Vence el {{ date }}",
+      "toggleAria": "Cambiar el estado de la tarea",
+      "completeAria": "Marcar como completada",
+      "reopenAria": "Reabrir la tarea"
+    },
+    "form": {
+      "createTitle": "Nueva tarea",
+      "editTitle": "Editar tarea",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "priority": "Prioridad",
+        "dueDate": "Fecha límite"
+      },
+      "errors": {
+        "required": "Este campo es obligatorio.",
+        "invalid": "Valor no válido."
+      }
+    },
+    "delete": {
+      "header": "Eliminar tarea",
+      "message": "¿Seguro que quieres eliminar «{{ title }}»? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    },
+    "states": {
+      "emptyTitle": "Aún no tienes tareas",
+      "emptyMessage": "Crea tu primera tarea para empezar a organizarte.",
+      "emptyFilteredTitle": "Sin resultados",
+      "emptyFilteredMessage": "Ninguna tarea coincide con los filtros aplicados.",
+      "errorMessage": "No se pudieron cargar las tareas."
+    },
+    "toasts": {
+      "created": "Tarea creada.",
+      "updated": "Tarea actualizada.",
+      "deleted": "Tarea eliminada.",
+      "completed": "Tarea completada.",
+      "reopened": "Tarea reabierta.",
+      "errorSummary": "Algo salió mal",
+      "errorDetail": "No se pudo completar la operación. Inténtalo de nuevo."
+    }
+  }
+}

@@ -1,0 +1,5 @@
+.auth-input {
+  --border-radius: var(--radius-md);
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}

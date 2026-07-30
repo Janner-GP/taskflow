@@ -1,0 +1,109 @@
+{
+  "app": {
+    "title": "TaskFlow"
+  },
+  "shell": {
+    "heading": "Your tasks",
+    "subtitle": "Organise what matters, from any device.",
+    "foundationReady": "Foundation ready",
+    "language": "Language",
+    "tabs": {
+      "tasks": "Tasks",
+      "profile": "Profile"
+    }
+  },
+  "priority": {
+    "LOW": "Low",
+    "MEDIUM": "Medium",
+    "HIGH": "High"
+  },
+  "status": {
+    "PENDING": "Pending",
+    "COMPLETED": "Completed"
+  },
+  "tasks": {
+    "empty": "No tasks yet",
+    "filters": {
+      "all": "All",
+      "priority": "Priority",
+      "allPriorities": "All priorities"
+    },
+    "create": {
+      "title": "New task",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "priorityLabel": "Priority",
+      "dueDateLabel": "Due date",
+      "error": "Could not create the task. Please try again"
+    },
+    "edit": {
+      "title": "Edit task"
+    },
+    "delete": {
+      "header": "Delete task",
+      "message": "Are you sure you want to delete “{{title}}”? This action cannot be undone.",
+      "confirm": "Delete"
+    },
+    "notifications": {
+      "highTitle": "New high-priority task",
+      "reminderTitle": "Task reminder"
+    }
+  },
+  "common": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "toast": {
+      "success": "Done",
+      "error": "Something went wrong"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Organise your tasks from today",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Enter a valid email",
+      "passwordMinlength": "At least 8 characters",
+      "passwordUppercase": "Include at least one uppercase letter",
+      "passwordDigit": "Include at least one digit",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "errors": {
+      "invalidCredentials": "Incorrect email or password",
+      "emailAlreadyExists": "An account with that email already exists",
+      "generic": "Something went wrong. Please try again"
+    },
+    "biometric": {
+      "reason": "Unlock your TaskFlow session"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "loggedInAs": "Signed in as",
+    "logout": "Log out"
+  },
+  "errors": {
+    "offline": "You are offline. Check your connection and try again.",
+    "unexpected": "Something went wrong. Please try again.",
+    "sessionExpired": "Your session has expired. Please sign in again."
+  }
+}

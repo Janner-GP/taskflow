@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# CRITICAL: keep secrets out of the build context.
+#
+# Anything reachable here can be COPY'd into an image layer and would then be
+# permanently readable via `docker history` / `docker save` — even if the file
+# is deleted afterwards. Secrets are injected at RUNTIME only, never at build.
+# Verified in CI: `docker history` must not contain any secret value.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+
+# ---------------------------------------------------------------------------
+# Never needed inside an image — and shipping them slows every build
+# ---------------------------------------------------------------------------
+.git/
+.github/
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.angular/
+**/.angular/
+coverage/
+**/coverage/
+playwright-report/
+test-results/
+mobile/android/
+mobile/ios/
+
+# ---------------------------------------------------------------------------
+# Docs & tooling
+# ---------------------------------------------------------------------------
+README.md
+docs/
+*.md
+!backend/README.md
+.editorconfig
+.idea/
+.vscode/
+docker-compose*.yml

@@ -1,0 +1,223 @@
+<section class="mx-auto max-w-3xl px-6 py-10">
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-2xl font-semibold tracking-tight">{{ 'tasks.title' | translate }}</h1>
+      @if (!store.loading() && store.meta().total > 0) {
+        <span
+          class="rounded-full bg-emphasis px-2.5 py-0.5 text-sm font-medium text-muted-color tabular-nums"
+        >
+          {{ store.meta().total }}
+        </span>
+      }
+    </div>
+
+    <p-button icon="pi pi-plus" [label]="'tasks.newTask' | translate" (onClick)="openCreate()" />
+  </header>
+
+  <p class="mt-1 text-muted-color">{{ 'tasks.subtitle' | translate }}</p>
+
+  <!-- Barra de filtros: todo se resuelve en el servidor, no en el array. -->
+  <div class="mt-7 flex flex-wrap items-center gap-2.5">
+    <p-iconfield class="min-w-0 grow basis-56">
+      <p-inputicon class="pi pi-search" />
+      <input
+        pInputText
+        type="search"
+        class="w-full"
+        [placeholder]="'tasks.filters.searchPlaceholder' | translate"
+        [attr.aria-label]="'tasks.filters.searchPlaceholder' | translate"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+    </p-iconfield>
+
+    <p-select
+      styleClass="w-36"
+      appendTo="body"
+      [options]="statusOptions"
+      optionLabel="labelKey"
+      optionValue="value"
+      [showClear]="true"
+      [placeholder]="'tasks.filters.status' | translate"
+      [ariaLabel]="'tasks.filters.status' | translate"
+      [ngModel]="store.filters().status"
+      (ngModelChange)="onStatusChange($event)"
+    >
+      <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+      <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+    </p-select>
+
+    <p-select
+      styleClass="w-36"
+      appendTo="body"
+      [options]="priorityOptions"
+      optionLabel="labelKey"
+      optionValue="value"
+      [showClear]="true"
+      [placeholder]="'tasks.filters.priority' | translate"
+      [ariaLabel]="'tasks.filters.priority' | translate"
+      [ngModel]="store.filters().priority"
+      (ngModelChange)="onPriorityChange($event)"
+    >
+      <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+      <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+    </p-select>
+
+    @if (store.isFiltered()) {
+      <p-button
+        icon="pi pi-times"
+        severity="secondary"
+        [text]="true"
+        [label]="'tasks.filters.clear' | translate"
+        (onClick)="clearFilters()"
+      />
+    }
+  </div>
+
+  <div class="mt-6">
+    @if (store.loading()) {
+      <app-loading-state [rows]="5" />
+    } @else if (showError()) {
+      <app-error-state
+        [message]="'tasks.states.errorMessage' | translate"
+        [retryLabel]="'common.retry' | translate"
+        (retry)="retry()"
+      />
+    } @else if (showEmpty()) {
+      @if (store.isFiltered()) {
+        <app-empty-state
+          [title]="'tasks.states.emptyFilteredTitle' | translate"
+          [message]="'tasks.states.emptyFilteredMessage' | translate"
+          [actionLabel]="'tasks.filters.clear' | translate"
+          (action)="clearFilters()"
+        />
+      } @else {
+        <app-empty-state
+          [title]="'tasks.states.emptyTitle' | translate"
+          [message]="'tasks.states.emptyMessage' | translate"
+          [actionLabel]="'tasks.newTask' | translate"
+          (action)="openCreate()"
+        />
+      }
+    } @else {
+      <ul class="divide-y divide-surface overflow-hidden rounded-2xl border border-surface bg-surface-0 dark:bg-surface-900">
+        @for (task of store.entities(); track task.id) {
+          <li
+            class="group flex items-start gap-3.5 border-l-4 px-4 py-3.5 transition-colors hover:bg-emphasis/50"
+            [class.border-l-emerald-400]="task.priority === 'LOW'"
+            [class.border-l-amber-400]="task.priority === 'MEDIUM'"
+            [class.border-l-rose-500]="task.priority === 'HIGH'"
+            [class.opacity-60]="task.status === 'COMPLETED'"
+          >
+            <p-checkbox
+              class="mt-0.5"
+              [binary]="true"
+              [ngModel]="task.status === 'COMPLETED'"
+              (onChange)="toggle(task)"
+              [ariaLabel]="
+                (task.status === 'PENDING' ? 'tasks.item.completeAria' : 'tasks.item.reopenAria') | translate
+              "
+            />
+
+            <div class="min-w-0 grow">
+              <div class="flex items-center gap-2">
+                <span
+                  class="truncate font-medium"
+                  [class.line-through]="task.status === 'COMPLETED'"
+                  [class.text-muted-color]="task.status === 'COMPLETED'"
+                >
+                  {{ task.title }}
+                </span>
+                <p-tag
+                  [value]="'tasks.priority.' + task.priority | translate"
+                  [severity]="prioritySeverity[task.priority]"
+                  [rounded]="true"
+                  styleClass="text-xs"
+                />
+              </div>
+
+              @if (task.description) {
+                <p class="mt-1 line-clamp-1 text-sm text-muted-color">{{ task.description }}</p>
+              }
+
+              @if (task.attachmentUrl) {
+                <img
+                  [src]="task.attachmentUrl"
+                  alt="adjunto"
+                  style="max-width:100%; max-height:80px; border-radius:4px; margin-top:0.25rem; object-fit:cover"
+                >
+              }
+
+              <p
+                class="mt-1.5 flex items-center gap-1.5 text-xs"
+                [class.text-muted-color]="!isOverdue(task)"
+                [class.text-rose-600]="isOverdue(task)"
+                [class.dark:text-rose-400]="isOverdue(task)"
+              >
+                <i class="pi pi-calendar text-[0.7rem]"></i>
+                @if (task.dueDate) {
+                  {{ 'tasks.item.dueDate' | translate: { date: (task.dueDate | date: 'mediumDate') } }}
+                } @else {
+                  {{ 'tasks.item.noDueDate' | translate }}
+                }
+              </p>
+            </div>
+
+            <div class="flex shrink-0 gap-1">
+              <p-button
+                icon="pi pi-pencil"
+                severity="secondary"
+                size="small"
+                [rounded]="true"
+                [text]="true"
+                [ariaLabel]="'common.edit' | translate"
+                (onClick)="openEdit(task)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                [rounded]="true"
+                [text]="true"
+                [ariaLabel]="'common.delete' | translate"
+                (onClick)="confirmDelete(task)"
+              />
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (showPaginator()) {
+        <p-paginator
+          class="mt-6 block"
+          [first]="firstRecord()"
+          [rows]="store.limit()"
+          [totalRecords]="store.meta().total"
+          (onPageChange)="onPageChange($event)"
+        />
+      }
+    }
+  </div>
+</section>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '640px': '92vw' }"
+  [header]="dialogTitleKey() | translate"
+  styleClass="taskflow-form-dialog"
+>
+  <app-task-form
+    #taskForm
+    [task]="editing()"
+    [saving]="saving()"
+    (save)="onSave($event)"
+    (cancelled)="dialogVisible.set(false)"
+  />
+</p-dialog>
+
+<p-confirmdialog />

@@ -1,0 +1,7 @@
+<ion-segment [value]="current()" (ionChange)="switch($event)" class="w-full" aria-label="Language">
+  @for (lang of languages; track lang) {
+    <ion-segment-button [value]="lang" class="text-xs uppercase">
+      {{ lang }}
+    </ion-segment-button>
+  }
+</ion-segment>

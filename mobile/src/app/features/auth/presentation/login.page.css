@@ -1,0 +1,7 @@
+/* Tailwind utilities in the template cover layout and typography; only the
+   parts of ion-input that live inside its shadow DOM need a rule here. */
+.auth-input {
+  --border-radius: var(--radius-md);
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}

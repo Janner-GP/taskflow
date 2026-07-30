@@ -1,0 +1,71 @@
+/* ===========================================================================
+ * TaskFlow mobile — global stylesheet
+ * ---------------------------------------------------------------------------
+ * HOW IONIC AND TAILWIND v4 ARE MADE TO COEXIST
+ *
+ * Two problems had to be solved, and the order of this file is the solution.
+ *
+ * (1) Two resets fighting each other.
+ *     Tailwind's Preflight and Ionic's normalize/structure both reset the same
+ *     elements, and Preflight wins by being second: `button { background:
+ *     transparent }`, the border reset and the heading font-size reset flatten
+ *     Ionic's components. So Preflight is NOT imported. Tailwind v4 has no
+ *     `corePlugins` switch any more — you opt out by importing the pieces you
+ *     want instead of the `tailwindcss` barrel:
+ *
+ *         @import 'tailwindcss/theme.css'     layer(theme);
+ *         @import 'tailwindcss/utilities.css' layer(utilities);
+ *
+ *     Ionic's own normalize.css is the reset for the whole app. Nothing is
+ *     lost: Preflight is a reset, not a feature.
+ *
+ * (2) Cascade layers invert the usual "last one wins".
+ *     An UNLAYERED rule beats a rule in ANY layer, whatever the specificity or
+ *     the order. Ionic ships its CSS unlayered, so with Tailwind's utilities in
+ *     `layer(utilities)` a plain `<h1 class="text-2xl">` would keep Ionic's
+ *     typography.css size — the utility silently loses. Fix: pull Ionic into an
+ *     explicit `ionic` layer and declare it FIRST in the layer order, so the
+ *     precedence becomes ionic < theme < base < components < utilities.
+ *
+ * Consequences worth knowing:
+ *   - `src/theme/tokens.css` is imported unlayered on purpose. That is what
+ *     lets our `--ion-*` overrides beat Ionic's own palettes without
+ *     `!important`.
+ *   - Tailwind cannot reach inside Ionic's shadow DOM. Utilities style the host
+ *     element (margin, width, grid placement) and Ionic's own `--ion-*` custom
+ *     properties style the internals. Do not fight this.
+ * =========================================================================== */
+
+/* Layer order declared up front — the whole scheme depends on this line. */
+@layer ionic, theme, base, components, utilities;
+
+/* --- Ionic, lowest precedence ------------------------------------------- */
+@import '@ionic/angular/css/core.css' layer(ionic);
+@import '@ionic/angular/css/normalize.css' layer(ionic);
+@import '@ionic/angular/css/structure.css' layer(ionic);
+@import '@ionic/angular/css/typography.css' layer(ionic);
+@import '@ionic/angular/css/display.css' layer(ionic);
+
+/* Ionic's system dark palette. Kept because it supplies the full
+   `--ion-color-step-*` scale for dark mode, which many Ionic components read.
+   Our brand/surface overrides in tokens.css sit on top of it. */
+@import '@ionic/angular/css/palettes/dark.system.css' layer(ionic);
+
+/* --- Tailwind v4, without Preflight ------------------------------------- */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* --- Design tokens, unlayered so they win ------------------------------- */
+@import './theme/tokens.css';
+
+/* --- The few global rules the app actually needs ------------------------ */
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  /* Stops the text inflation Android WebView applies to unfamiliar layouts. */
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}

@@ -1,0 +1,50 @@
+/* TaskFlow — hoja de estilos global.
+ *
+ * Es un .css (no .scss) a propósito: Tailwind v4 se configura con at-rules
+ * nativas (@import, @theme, @plugin, @custom-variant) que Sass intentaría
+ * resolver como partials y rompería. Los componentes sí usan .scss.
+ *
+ * Orden de imports (no cambiar):
+ *   1. tailwindcss          — base, utilidades, variantes
+ *   2. tailwindcss-primeui  — mapea las escalas primary y surface de Tailwind
+ *                             a los tokens vivos de PrimeNG (--p-*)
+ *   3. design-tokens.css    — la paleta cruda --tf-* y los tokens propios
+ */
+/* Orden de cascade layers. Va ANTES de los @import (el spec solo permite
+ * sentencias @layer y @charset delante de @import) y es autoritativo: la primera
+ * declaración fija el orden.
+ *
+ * `primeng` queda entre `base` y `utilities` para que las utilidades de Tailwind
+ * ganen a los estilos del tema — es lo que hace que `styleClass="mt-8"` sobre un
+ * <p-card> funcione. Sin esto PrimeNG inyecta CSS sin capa, y el CSS sin capa
+ * gana a cualquier capa. */
+@layer theme, base, primeng, components, utilities;
+
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import './styles/design-tokens.css';
+
+/* El dark mode lo controla la clase `.dark` en <html> (ver core/theme), no
+ * `prefers-color-scheme`. Alineamos la variante `dark:` de Tailwind con el
+ * `darkModeSelector` de PrimeNG para que ambos conmuten a la vez. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--p-content-background);
+    color: var(--p-text-color);
+  }
+
+  /* Foco visible y consistente en toda la app */
+  :focus-visible {
+    outline: 2px solid var(--p-primary-color);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,10 @@
+<p-select
+  [options]="languages"
+  [ngModel]="current()"
+  (ngModelChange)="use($event)"
+  optionLabel="label"
+  optionValue="value"
+  size="small"
+  styleClass="w-32"
+  appendTo="body"
+/>

@@ -1,0 +1,56 @@
+<div class="flex min-h-screen flex-col">
+  <header
+    class="sticky top-0 z-10 border-b border-surface bg-surface-0/85 backdrop-blur dark:bg-surface-900/85"
+  >
+    <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3">
+      <a routerLink="/tasks" class="flex items-center gap-2 font-semibold tracking-tight">
+        <span class="grid size-8 place-items-center rounded-control bg-primary-600 text-primary-contrast">TF</span>
+        <span>TaskFlow</span>
+      </a>
+
+      <nav class="flex items-center gap-1 text-sm">
+        <a
+          routerLink="/tasks"
+          routerLinkActive="bg-emphasis text-color"
+          class="rounded-control px-3 py-1.5 text-muted-color transition-colors hover:bg-emphasis"
+        >
+          {{ 'shell.nav.tasks' | translate }}
+        </a>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2">
+        <span class="hidden items-center gap-2 pr-1 sm:flex">
+          <span
+            class="grid size-8 place-items-center rounded-full bg-emphasis text-xs font-semibold"
+            aria-hidden="true"
+          >
+            {{ store.initials() }}
+          </span>
+          <span class="max-w-40 truncate text-sm font-medium">{{ store.displayName() }}</span>
+        </span>
+
+        <app-language-switcher />
+        <app-theme-toggle />
+
+        <p-button
+          severity="secondary"
+          size="small"
+          [text]="true"
+          [label]="'shell.logout' | translate"
+          [loading]="store.loading()"
+          (onClick)="logout()"
+        />
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <router-outlet />
+  </main>
+
+  <footer class="border-t border-surface">
+    <p class="mx-auto max-w-5xl px-6 py-4 text-sm text-muted-color">
+      {{ 'shell.footer' | translate }}
+    </p>
+  </footer>
+</div>

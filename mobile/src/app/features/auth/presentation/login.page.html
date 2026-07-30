@@ -1,0 +1,59 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <section class="mx-auto flex max-w-md flex-col gap-8 pt-12">
+    <header class="flex flex-col gap-1 text-center">
+      <h1 class="text-content text-2xl font-semibold tracking-tight">
+        {{ 'auth.login.title' | translate }}
+      </h1>
+      <p class="text-content-muted text-sm">{{ 'auth.login.subtitle' | translate }}</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <ion-input
+        formControlName="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        labelPlacement="floating"
+        fill="outline"
+        class="auth-input"
+        [label]="'auth.login.email' | translate"
+        [errorText]="'auth.validation.email' | translate"
+        [class.ion-touched]="submitted()"
+        [class.ion-invalid]="submitted() && form.controls.email.invalid"
+      />
+
+      <ion-input
+        formControlName="password"
+        type="password"
+        autocomplete="current-password"
+        labelPlacement="floating"
+        fill="outline"
+        class="auth-input"
+        [label]="'auth.login.password' | translate"
+        [errorText]="'auth.validation.required' | translate"
+        [class.ion-touched]="submitted()"
+        [class.ion-invalid]="submitted() && form.controls.password.invalid"
+      />
+
+      @if (errorKey()) {
+        <ion-note color="danger" class="text-center text-sm">
+          {{ errorKey() | translate }}
+        </ion-note>
+      }
+
+      <ion-button type="submit" expand="block" shape="round" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <ion-spinner name="crescent" slot="start" />
+        }
+        {{ 'auth.login.submit' | translate }}
+      </ion-button>
+    </form>
+
+    <p class="text-content-muted text-center text-sm">
+      {{ 'auth.login.noAccount' | translate }}
+      <a routerLink="/auth/register" class="text-accent font-medium">
+        {{ 'auth.login.register' | translate }}
+      </a>
+    </p>
+  </section>
+</ion-content>

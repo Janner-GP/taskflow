@@ -1,0 +1,99 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <section class="mx-auto flex max-w-md flex-col gap-8 pt-12">
+    <header class="flex flex-col gap-1 text-center">
+      <h1 class="text-content text-2xl font-semibold tracking-tight">
+        {{ 'auth.register.title' | translate }}
+      </h1>
+      <p class="text-content-muted text-sm">{{ 'auth.register.subtitle' | translate }}</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <ion-input
+        formControlName="name"
+        type="text"
+        autocomplete="name"
+        labelPlacement="floating"
+        fill="outline"
+        class="auth-input"
+        [label]="'auth.register.name' | translate"
+        [errorText]="'auth.validation.required' | translate"
+        [class.ion-touched]="submitted()"
+        [class.ion-invalid]="submitted() && form.controls.name.invalid"
+      />
+
+      <ion-input
+        formControlName="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        labelPlacement="floating"
+        fill="outline"
+        class="auth-input"
+        [label]="'auth.register.email' | translate"
+        [errorText]="'auth.validation.email' | translate"
+        [class.ion-touched]="submitted()"
+        [class.ion-invalid]="submitted() && form.controls.email.invalid"
+      />
+
+      <div class="flex flex-col gap-1">
+        <ion-input
+          formControlName="password"
+          type="password"
+          autocomplete="new-password"
+          labelPlacement="floating"
+          fill="outline"
+          class="auth-input"
+          [label]="'auth.register.password' | translate"
+          [class.ion-touched]="submitted()"
+          [class.ion-invalid]="submitted() && form.controls.password.invalid"
+        />
+        @if (submitted() && form.controls.password.hasError('minlength')) {
+          <ion-note color="danger" class="text-xs">{{ 'auth.validation.passwordMinlength' | translate }}</ion-note>
+        }
+        @if (submitted() && form.controls.password.hasError('uppercase')) {
+          <ion-note color="danger" class="text-xs">{{ 'auth.validation.passwordUppercase' | translate }}</ion-note>
+        }
+        @if (submitted() && form.controls.password.hasError('digit')) {
+          <ion-note color="danger" class="text-xs">{{ 'auth.validation.passwordDigit' | translate }}</ion-note>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <ion-input
+          formControlName="confirmPassword"
+          type="password"
+          autocomplete="new-password"
+          labelPlacement="floating"
+          fill="outline"
+          class="auth-input"
+          [label]="'auth.register.confirmPassword' | translate"
+          [class.ion-touched]="submitted()"
+          [class.ion-invalid]="submitted() && form.controls.confirmPassword.invalid"
+        />
+        @if (submitted() && form.controls.confirmPassword.hasError('mismatch')) {
+          <ion-note color="danger" class="text-xs">{{ 'auth.validation.passwordMismatch' | translate }}</ion-note>
+        }
+      </div>
+
+      @if (errorKey()) {
+        <ion-note color="danger" class="text-center text-sm">
+          {{ errorKey() | translate }}
+        </ion-note>
+      }
+
+      <ion-button type="submit" expand="block" shape="round" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <ion-spinner name="crescent" slot="start" />
+        }
+        {{ 'auth.register.submit' | translate }}
+      </ion-button>
+    </form>
+
+    <p class="text-content-muted text-center text-sm">
+      {{ 'auth.register.hasAccount' | translate }}
+      <a routerLink="/auth/login" class="text-accent font-medium">
+        {{ 'auth.register.login' | translate }}
+      </a>
+    </p>
+  </section>
+</ion-content>

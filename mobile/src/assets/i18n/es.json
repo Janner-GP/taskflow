@@ -1,0 +1,109 @@
+{
+  "app": {
+    "title": "TaskFlow"
+  },
+  "shell": {
+    "heading": "Tus tareas",
+    "subtitle": "Organiza lo que importa, desde cualquier dispositivo.",
+    "foundationReady": "Fundación lista",
+    "language": "Idioma",
+    "tabs": {
+      "tasks": "Tareas",
+      "profile": "Perfil"
+    }
+  },
+  "priority": {
+    "LOW": "Baja",
+    "MEDIUM": "Media",
+    "HIGH": "Alta"
+  },
+  "status": {
+    "PENDING": "Pendiente",
+    "COMPLETED": "Completada"
+  },
+  "tasks": {
+    "empty": "No hay tareas todavía",
+    "filters": {
+      "all": "Todas",
+      "priority": "Prioridad",
+      "allPriorities": "Todas las prioridades"
+    },
+    "create": {
+      "title": "Nueva tarea",
+      "titleLabel": "Título",
+      "descriptionLabel": "Descripción",
+      "priorityLabel": "Prioridad",
+      "dueDateLabel": "Fecha límite",
+      "error": "No se pudo crear la tarea. Inténtalo de nuevo"
+    },
+    "edit": {
+      "title": "Editar tarea"
+    },
+    "delete": {
+      "header": "Eliminar tarea",
+      "message": "¿Seguro que quieres eliminar «{{title}}»? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    },
+    "notifications": {
+      "highTitle": "Nueva tarea de prioridad alta",
+      "reminderTitle": "Recordatorio de tarea"
+    }
+  },
+  "common": {
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "toast": {
+      "success": "Listo",
+      "error": "Algo salió mal"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión para continuar",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Regístrate"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Organiza tus tareas desde hoy",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "login": "Inicia sesión"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio",
+      "email": "Introduce un correo válido",
+      "passwordMinlength": "Mínimo 8 caracteres",
+      "passwordUppercase": "Incluye al menos una mayúscula",
+      "passwordDigit": "Incluye al menos un número",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    },
+    "errors": {
+      "invalidCredentials": "Correo o contraseña incorrectos",
+      "emailAlreadyExists": "Ya existe una cuenta con ese correo",
+      "generic": "Algo ha ido mal. Inténtalo de nuevo"
+    },
+    "biometric": {
+      "reason": "Desbloquea tu sesión de TaskFlow"
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "loggedInAs": "Sesión iniciada como",
+    "logout": "Cerrar sesión"
+  },
+  "errors": {
+    "offline": "Sin conexión. Comprueba tu red e inténtalo de nuevo.",
+    "unexpected": "Algo ha ido mal. Inténtalo de nuevo.",
+    "sessionExpired": "Tu sesión ha caducado. Inicia sesión de nuevo."
+  }
+}

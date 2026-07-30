@@ -1,0 +1,62 @@
+# ---------------------------------------------------------------------------
+# Secrets — nothing here is ever committed. Enforced in CI by gitleaks.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+.claude
+.opencode
+.cursor
+google-services.json
+GoogleService-Info.plist
+
+# ---------------------------------------------------------------------------
+# Dependencies & build output
+# ---------------------------------------------------------------------------
+node_modules/
+dist/
+build/
+tmp/
+out-tsc/
+.angular/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# Capacitor native projects — regenerated with `npx cap add`
+# ---------------------------------------------------------------------------
+mobile/android/
+mobile/ios/
+.gradle/
+local.properties
+
+# ---------------------------------------------------------------------------
+# Tests & coverage
+# ---------------------------------------------------------------------------
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# ---------------------------------------------------------------------------
+# Editors & OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-error.log*

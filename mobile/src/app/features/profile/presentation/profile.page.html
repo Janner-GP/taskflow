@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ 'profile.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <section class="mx-auto flex max-w-md flex-col gap-6 py-4">
+    @if (user(); as u) {
+      <article class="bg-surface border-line shadow-card flex flex-col gap-1 rounded-card border p-4">
+        <p class="text-content-muted text-xs uppercase tracking-wide">
+          {{ 'profile.loggedInAs' | translate }}
+        </p>
+        <p class="text-content text-base font-semibold">{{ u.name }}</p>
+        <p class="text-content-muted text-sm">{{ u.email }}</p>
+      </article>
+    }
+
+    <div class="flex flex-col gap-2">
+      <div class="text-content-muted flex items-center gap-2 text-xs uppercase tracking-wide">
+        <ion-icon name="language-outline" aria-hidden="true" />
+        <span>{{ 'shell.language' | translate }}</span>
+      </div>
+      <app-language-switcher />
+    </div>
+
+    <ion-button expand="block" fill="outline" color="danger" (click)="logout()">
+      {{ 'profile.logout' | translate }}
+    </ion-button>
+  </section>
+</ion-content>

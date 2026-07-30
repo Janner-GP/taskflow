@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  // `prisma.config.ts` vive en la raíz y solo lo usa el CLI de Prisma. Si entra
+  // en el build, tsc sube el rootDir común a la raíz del proyecto y la salida
+  // pasa de `dist/main.js` a `dist/src/main.js`, rompiendo `start:prod`.
+  "exclude": ["node_modules", "dist", "prisma.config.ts", "**/*spec.ts"],
+  "compilerOptions": {
+    "rootDir": "./src",
+    // Dentro de `dist` a propósito: `nest build` borra `dist` en cada corrida
+    // (deleteOutDir), así que el caché incremental se borra con él. Si vive
+    // fuera, tsc cree que ya está todo compilado y no emite nada.
+    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo"
+  }
+}

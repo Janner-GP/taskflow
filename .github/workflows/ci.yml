@@ -1,0 +1,309 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un run por rama: si empujas otra vez, el anterior se cancela en vez de
+# competir por runners.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Mínimo indispensable. Sin esto el token del job tendría permisos de escritura
+# que ningún job de CI necesita.
+permissions:
+  contents: read
+
+jobs:
+  # -------------------------------------------------------------------------
+  # La prueba exige "no incluir secretos, tokens ni credenciales en el
+  # repositorio". Esto lo verifica una máquina, no una promesa: si algo se
+  # cuela, el build falla antes de llegar a main.
+  # -------------------------------------------------------------------------
+  secrets-scan:
+    name: Escaneo de secretos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Historial completo: un secreto borrado en el último commit sigue
+          # estando en los anteriores y sigue siendo un secreto filtrado.
+          fetch-depth: 0
+
+      # Usamos la imagen oficial en vez de la action porque gitleaks-action
+      # exige GITLEAKS_LICENSE para repos de organización. --redact evita que
+      # el propio log del escaneo imprima el valor encontrado.
+      - name: gitleaks
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo" \
+            zricethezav/gitleaks:latest detect \
+            --source /repo --no-banner --redact --verbose
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - run: npm ci
+      # El client de Prisma es código generado: sin esto, el typecheck falla.
+      - run: npx prisma generate
+      - run: npm run lint
+      - run: npm run build
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  mobile:
+    name: Mobile
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      # Solo los assets web. El build nativo de Android necesita SDK y JDK y se
+      # queda fuera de CI a propósito: no aporta señal y multiplica el tiempo.
+      - run: npm run build
+
+  # -------------------------------------------------------------------------
+  # Deploy a AWS ECS Fargate. Solo se ejecuta en push a main una vez que
+  # todos los jobs de CI pasan.
+  #
+  # Flujo de secretos:
+  #   GitHub Secrets → Secrets Manager (taskflow/prod) → ECS task `secrets`
+  #
+  # Vars sensibles (via Secrets Manager → campo `secrets` de la task def):
+  #   DATABASE_URL, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, COOKIE_SECRET,
+  #   AWS_ACCESS_KEY_ID (para S3), AWS_SECRET_ACCESS_KEY (para S3)
+  #
+  # Vars no sensibles (campo `environment` de la task def, en claro):
+  #   NODE_ENV, PORT, CORS_ORIGIN, APP_PUBLIC_URL, AWS_REGION, S3_BUCKET_NAME, etc.
+  #
+  # GitHub Secrets requeridos:
+  #   AWS_REGION            — p. ej. us-east-2
+  #   AWS_ACCOUNT_ID        — ID numérico de la cuenta AWS
+  #   AWS_ACCESS_KEY_ID     — clave IAM del usuario de deploy
+  #   AWS_SECRET_ACCESS_KEY — secreto IAM del usuario de deploy
+  #   DATABASE_URL          — URL de conexión a RDS PostgreSQL (password URL-encoded)
+  #   JWT_ACCESS_SECRET     — openssl rand -base64 48
+  #   JWT_REFRESH_SECRET    — openssl rand -base64 48
+  #   COOKIE_SECRET         — openssl rand -base64 48
+  #   S3_BUCKET_NAME        — nombre del bucket S3
+  #   CORS_ORIGIN           — http://<ALB-DNS> (impreso por setup.sh)
+  #   APP_PUBLIC_URL        — http://<ALB-DNS>
+  # -------------------------------------------------------------------------
+  deploy:
+    name: Deploy → ECS Fargate
+    needs: [secrets-scan, backend, web, mobile]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      AWS_REGION:     ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY:   ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      IMAGE_TAG:      sha-${{ github.sha }}
+      CLUSTER:        taskflow
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configurar credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Login a Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ── Imágenes ──────────────────────────────────────────────────────────
+      - name: Build y push — backend
+        run: |
+          docker build -t $ECR_REGISTRY/taskflow-backend:$IMAGE_TAG \
+                       -t $ECR_REGISTRY/taskflow-backend:latest \
+                       ./backend
+          docker push $ECR_REGISTRY/taskflow-backend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/taskflow-backend:latest
+
+      - name: Build y push — web
+        run: |
+          docker build -t $ECR_REGISTRY/taskflow-web:$IMAGE_TAG \
+                       -t $ECR_REGISTRY/taskflow-web:latest \
+                       ./web
+          docker push $ECR_REGISTRY/taskflow-web:$IMAGE_TAG
+          docker push $ECR_REGISTRY/taskflow-web:latest
+
+      # ── Secrets Manager ───────────────────────────────────────────────────
+      # Actualiza el secreto JSON con los valores de GitHub Secrets.
+      # La task definition referencia cada clave individualmente via ARN:key::
+      - name: Actualizar Secrets Manager
+        env:
+          DATABASE_URL:         ${{ secrets.DATABASE_URL }}
+          JWT_ACCESS_SECRET:    ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET:   ${{ secrets.JWT_REFRESH_SECRET }}
+          COOKIE_SECRET:        ${{ secrets.COOKIE_SECRET }}
+          S3_ACCESS_KEY_ID:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          SECRET_ARN=$(aws secretsmanager describe-secret \
+            --secret-id taskflow/prod \
+            --query ARN --output text \
+            --region $AWS_REGION)
+
+          aws secretsmanager put-secret-value \
+            --secret-id taskflow/prod \
+            --secret-string "$(jq -nc \
+              --arg db  "$DATABASE_URL" \
+              --arg jat "$JWT_ACCESS_SECRET" \
+              --arg jrt "$JWT_REFRESH_SECRET" \
+              --arg cs  "$COOKIE_SECRET" \
+              --arg aki "$S3_ACCESS_KEY_ID" \
+              --arg ask "$S3_SECRET_ACCESS_KEY" \
+              '{DATABASE_URL:$db,JWT_ACCESS_SECRET:$jat,JWT_REFRESH_SECRET:$jrt,COOKIE_SECRET:$cs,AWS_ACCESS_KEY_ID:$aki,AWS_SECRET_ACCESS_KEY:$ask}')" \
+            --region $AWS_REGION > /dev/null
+
+          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_ENV
+
+      # ── Task definitions ──────────────────────────────────────────────────
+      # Vars sensibles: campo `secrets` → las inyecta el ECS agent al arrancar
+      #                 leyendo Secrets Manager; nunca aparecen en la API de ECS.
+      # Vars no sensibles: campo `environment` → en claro en la task def.
+      - name: Registrar task definition — backend
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          CORS_ORIGIN:    ${{ secrets.CORS_ORIGIN }}
+          APP_PUBLIC_URL: ${{ secrets.APP_PUBLIC_URL }}
+        run: |
+          EXEC_ROLE=$(aws iam get-role \
+            --role-name taskflow-ecs-execution-role \
+            --query Role.Arn --output text)
+
+          aws ecs register-task-definition \
+            --family taskflow-backend \
+            --network-mode awsvpc \
+            --requires-compatibilities FARGATE \
+            --cpu 512 --memory 1024 \
+            --execution-role-arn "$EXEC_ROLE" \
+            --container-definitions "[{
+              \"name\":\"backend\",
+              \"image\":\"$ECR_REGISTRY/taskflow-backend:$IMAGE_TAG\",
+              \"portMappings\":[{\"containerPort\":3000,\"protocol\":\"tcp\"}],
+              \"secrets\":[
+                {\"name\":\"DATABASE_URL\",          \"valueFrom\":\"$SECRET_ARN:DATABASE_URL::\"},
+                {\"name\":\"JWT_ACCESS_SECRET\",     \"valueFrom\":\"$SECRET_ARN:JWT_ACCESS_SECRET::\"},
+                {\"name\":\"JWT_REFRESH_SECRET\",    \"valueFrom\":\"$SECRET_ARN:JWT_REFRESH_SECRET::\"},
+                {\"name\":\"COOKIE_SECRET\",         \"valueFrom\":\"$SECRET_ARN:COOKIE_SECRET::\"},
+                {\"name\":\"AWS_ACCESS_KEY_ID\",     \"valueFrom\":\"$SECRET_ARN:AWS_ACCESS_KEY_ID::\"},
+                {\"name\":\"AWS_SECRET_ACCESS_KEY\", \"valueFrom\":\"$SECRET_ARN:AWS_SECRET_ACCESS_KEY::\"}
+              ],
+              \"environment\":[
+                {\"name\":\"NODE_ENV\",          \"value\":\"production\"},
+                {\"name\":\"PORT\",              \"value\":\"3000\"},
+                {\"name\":\"SWAGGER_ENABLED\",   \"value\":\"false\"},
+                {\"name\":\"ACCESS_TOKEN_TTL\",  \"value\":\"15m\"},
+                {\"name\":\"REFRESH_TOKEN_TTL\", \"value\":\"7d\"},
+                {\"name\":\"BCRYPT_ROUNDS\",     \"value\":\"12\"},
+                {\"name\":\"CORS_ORIGIN\",       \"value\":\"$CORS_ORIGIN\"},
+                {\"name\":\"APP_PUBLIC_URL\",    \"value\":\"$APP_PUBLIC_URL\"},
+                {\"name\":\"THROTTLE_TTL\",      \"value\":\"60\"},
+                {\"name\":\"THROTTLE_LIMIT\",    \"value\":\"10\"},
+                {\"name\":\"TRUSTED_PROXY_IP\",  \"value\":\"10.0.0.1\"},
+                {\"name\":\"AWS_REGION\",        \"value\":\"$AWS_REGION\"},
+                {\"name\":\"S3_BUCKET_NAME\",    \"value\":\"$S3_BUCKET_NAME\"}
+              ],
+              \"logConfiguration\":{
+                \"logDriver\":\"awslogs\",
+                \"options\":{
+                  \"awslogs-group\":\"/ecs/taskflow-backend\",
+                  \"awslogs-region\":\"$AWS_REGION\",
+                  \"awslogs-stream-prefix\":\"ecs\"
+                }
+              },
+              \"essential\":true
+            }]" \
+            --region $AWS_REGION > /dev/null
+
+      - name: Registrar task definition — web
+        run: |
+          EXEC_ROLE=$(aws iam get-role \
+            --role-name taskflow-ecs-execution-role \
+            --query Role.Arn --output text)
+
+          aws ecs register-task-definition \
+            --family taskflow-web \
+            --network-mode awsvpc \
+            --requires-compatibilities FARGATE \
+            --cpu 256 --memory 512 \
+            --execution-role-arn "$EXEC_ROLE" \
+            --container-definitions "[{
+              \"name\":\"web\",
+              \"image\":\"$ECR_REGISTRY/taskflow-web:$IMAGE_TAG\",
+              \"portMappings\":[{\"containerPort\":80,\"protocol\":\"tcp\"}],
+              \"logConfiguration\":{
+                \"logDriver\":\"awslogs\",
+                \"options\":{
+                  \"awslogs-group\":\"/ecs/taskflow-web\",
+                  \"awslogs-region\":\"$AWS_REGION\",
+                  \"awslogs-stream-prefix\":\"ecs\"
+                }
+              },
+              \"essential\":true
+            }]" \
+            --region $AWS_REGION > /dev/null
+
+      # ── Deploy ────────────────────────────────────────────────────────────
+      - name: Deploy servicios ECS
+        run: |
+          aws ecs update-service \
+            --cluster $CLUSTER --service taskflow-backend \
+            --task-definition taskflow-backend \
+            --region $AWS_REGION > /dev/null
+
+          aws ecs update-service \
+            --cluster $CLUSTER --service taskflow-web \
+            --task-definition taskflow-web \
+            --region $AWS_REGION > /dev/null
+
+      - name: Esperar a que los servicios estén estables
+        run: |
+          aws ecs wait services-stable \
+            --cluster $CLUSTER \
+            --services taskflow-backend taskflow-web \
+            --region $AWS_REGION

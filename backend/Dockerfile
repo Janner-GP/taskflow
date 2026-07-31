@@ -8,6 +8,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN npx prisma generate
 
 COPY . .
@@ -28,6 +29,7 @@ ENV NODE_ENV=production
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prod_modules/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./
 
 # i18n assets — nest-cli.json los copia a dist/ durante el build
 # (ya incluidos en dist/ del stage anterior)

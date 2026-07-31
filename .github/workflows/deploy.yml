@@ -203,18 +203,9 @@ jobs:
 
           echo "Subnets: $SUBNETS | SGs: $SGS"
 
-          # Escribir overrides a archivo usando python para evitar problemas de quoting
-          python3 -c "
-import json
-overrides = {
-  'containerOverrides': [{
-    'name': 'backend',
-    'command': ['node_modules/.bin/prisma', 'migrate', 'deploy']
-  }]
-}
-with open('/tmp/migrate-overrides.json', 'w') as f:
-    json.dump(overrides, f)
-"
+          # Escribir overrides a archivo (JSON sin comillas simples — seguro con echo)
+          echo '{"containerOverrides":[{"name":"backend","command":["node_modules/.bin/prisma","migrate","deploy"]}]}' \
+            > /tmp/migrate-overrides.json
 
           TASK_ARN=$(aws ecs run-task \
             --cluster "$CLUSTER" \

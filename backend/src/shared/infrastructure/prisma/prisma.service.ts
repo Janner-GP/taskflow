@@ -17,10 +17,19 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(config: ConfigService<Env, true>) {
+    const rawUrl = config.get('DATABASE_URL', { infer: true });
+    // pg (node-postgres) no entiende ?schema= (parámetro exclusivo del CLI de
+    // Prisma). Lo eliminamos del URL antes de pasárselo al Pool.
+    // En producción añadimos sslmode=require: el motor Rust de migraciones usa
+    // SSL por defecto (prefer), pero pg no lo hace, y RDS puede rechazar
+    // conexiones sin SSL cuando rds.force_ssl está activo.
+    const urlObj = new URL(rawUrl);
+    urlObj.searchParams.delete('schema');
+    if (config.get('NODE_ENV', { infer: true }) === 'production') {
+      urlObj.searchParams.set('sslmode', 'require');
+    }
     super({
-      adapter: new PrismaPg({
-        connectionString: config.get('DATABASE_URL', { infer: true }),
-      }),
+      adapter: new PrismaPg({ connectionString: urlObj.toString() }),
     });
   }
 

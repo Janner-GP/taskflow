@@ -45,7 +45,7 @@
 
         @if (dropdownOpen()) {
           <!-- Backdrop para cerrar al hacer clic fuera -->
-          <div class="fixed inset-0 z-40" (click)="dropdownOpen.set(false)"></div>
+          <div class="fixed inset-0 z-40" tabindex="-1" (click)="dropdownOpen.set(false)" (keydown.escape)="dropdownOpen.set(false)"></div>
 
           <!-- Panel del menú -->
           <div class="absolute right-0 top-full z-50 mt-1.5 min-w-48 rounded-xl border border-surface bg-surface-0 shadow-raised dark:bg-surface-900">

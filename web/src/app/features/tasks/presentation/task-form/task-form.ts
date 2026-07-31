@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   computed,
   effect,
   inject,
   input,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -41,6 +43,8 @@ export class TaskForm {
 
   save = output<CreateTaskRequest | UpdateTaskRequest>();
   cancelled = output<void>();
+
+  private readonly fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   readonly attachmentFile = signal<File | null>(null);
   readonly isDragOver = signal(false);
@@ -138,6 +142,12 @@ export class TaskForm {
     const file = event.dataTransfer?.files?.[0] ?? null;
     if (file && ACCEPTED_TYPES.includes(file.type)) {
       this.attachmentFile.set(file);
+    }
+  }
+
+  protected onDropzoneClick(): void {
+    if (!this.attachmentFile()) {
+      this.fileInputRef()?.nativeElement.click();
     }
   }
 

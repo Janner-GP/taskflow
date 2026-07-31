@@ -1,4 +1,4 @@
-<section class="mx-auto max-w-3xl px-6 py-10">
+<section class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
   <header class="flex flex-wrap items-center justify-between gap-4">
     <div class="flex items-center gap-3">
       <h1 class="text-2xl font-semibold tracking-tight">{{ 'tasks.title' | translate }}</h1>
@@ -144,7 +144,7 @@
                 <img
                   [src]="task.attachmentUrl"
                   alt="adjunto"
-                  style="max-width:100%; max-height:80px; border-radius:4px; margin-top:0.25rem; object-fit:cover"
+                  class="mt-1.5 max-h-20 w-auto max-w-full rounded-lg object-cover shadow-sm ring-1 ring-surface-200 dark:ring-surface-700"
                 >
               }
 
@@ -203,11 +203,12 @@
 <p-dialog
   [visible]="dialogVisible()"
   (visibleChange)="dialogVisible.set($event)"
+  (onHide)="onDialogHide()"
   [modal]="true"
   [draggable]="false"
   [dismissableMask]="true"
-  [style]="{ width: '30rem' }"
-  [breakpoints]="{ '640px': '92vw' }"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
   [header]="dialogTitleKey() | translate"
   styleClass="taskflow-form-dialog"
 >

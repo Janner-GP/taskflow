@@ -1,20 +1,30 @@
 <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">
+
+  <!-- Título -->
   <div class="flex flex-col gap-2">
-    <label for="task-title" class="text-sm font-medium">{{ 'tasks.form.fields.title' | translate }}</label>
+    <label for="task-title" class="text-sm font-medium">
+      {{ 'tasks.form.fields.title' | translate }}
+    </label>
     <input pInputText id="task-title" formControlName="title" class="w-full" />
     @if (errorKey(form.controls.title); as key) {
       <small class="text-sm text-red-600 dark:text-red-400">{{ key | translate }}</small>
     }
   </div>
 
+  <!-- Descripción -->
   <div class="flex flex-col gap-2">
-    <label for="task-description" class="text-sm font-medium">{{ 'tasks.form.fields.description' | translate }}</label>
+    <label for="task-description" class="text-sm font-medium">
+      {{ 'tasks.form.fields.description' | translate }}
+    </label>
     <textarea pTextarea id="task-description" formControlName="description" rows="3" class="w-full"></textarea>
   </div>
 
-  <div class="grid gap-5 sm:grid-cols-2">
+  <!-- Prioridad + Fecha -->
+  <div class="grid gap-4 sm:grid-cols-2">
     <div class="flex flex-col gap-2">
-      <label for="task-priority" class="text-sm font-medium">{{ 'tasks.form.fields.priority' | translate }}</label>
+      <label for="task-priority" class="text-sm font-medium">
+        {{ 'tasks.form.fields.priority' | translate }}
+      </label>
       <p-select
         inputId="task-priority"
         formControlName="priority"
@@ -24,17 +34,15 @@
         optionLabel="labelKey"
         optionValue="value"
       >
-        <ng-template #selectedItem let-option>
-          {{ option.labelKey | translate }}
-        </ng-template>
-        <ng-template #item let-option>
-          {{ option.labelKey | translate }}
-        </ng-template>
+        <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+        <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
       </p-select>
     </div>
 
     <div class="flex flex-col gap-2">
-      <label for="task-due-date" class="text-sm font-medium">{{ 'tasks.form.fields.dueDate' | translate }}</label>
+      <label for="task-due-date" class="text-sm font-medium">
+        {{ 'tasks.form.fields.dueDate' | translate }}
+      </label>
       <p-datepicker
         inputId="task-due-date"
         formControlName="dueDate"
@@ -47,25 +55,67 @@
     </div>
   </div>
 
-  <div>
-    <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileChange($event)" hidden>
-    <p-button
-      type="button"
-      [label]="'tasks.form.attachImage' | translate"
-      icon="pi pi-image"
-      severity="secondary"
-      [outlined]="true"
-      size="small"
-      (onClick)="fileInput.click()"
-    />
-    @if (attachmentFile()) {
-      <div style="margin-top:0.5rem">
-        <img [src]="previewUrl()" alt="preview" style="max-height:120px; border-radius:6px;">
-      </div>
-    }
+  <!-- Zona de carga de imagen (drag & drop) -->
+  <div class="flex flex-col gap-2">
+    <label class="text-sm font-medium">{{ 'tasks.form.fields.attachment' | translate }}</label>
+
+    <div
+      [class]="dropzoneClass()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="fileInput.click()"
+      (keydown.space)="$event.preventDefault(); fileInput.click()"
+      [attr.aria-label]="'tasks.form.dropzone.aria' | translate"
+    >
+      <input
+        #fileInput
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="onFileChange($event)"
+        class="hidden"
+      >
+
+      @if (attachmentFile()) {
+        <!-- Vista previa del archivo seleccionado -->
+        <div class="relative w-full" (click)="$event.stopPropagation()">
+          <img
+            [src]="previewUrl()"
+            alt="preview"
+            class="mx-auto block max-h-36 rounded-lg object-cover shadow-sm ring-1 ring-surface-200 dark:ring-surface-700"
+          >
+          <button
+            type="button"
+            class="absolute right-2 top-2 grid size-6 place-items-center rounded-full bg-surface-900/70 text-white transition-colors hover:bg-surface-900"
+            (click)="clearAttachment($event)"
+          >
+            <span class="material-symbols-outlined text-sm leading-none" style="font-size:14px">close</span>
+          </button>
+        </div>
+        <p class="text-xs text-muted-color">{{ attachmentFile()!.name }}</p>
+
+      } @else {
+        <!-- Estado vacío: instrucción de arrastre -->
+        <span [class]="dropzoneIconClass()">
+          {{ isDragOver() ? 'file_download' : 'add_photo_alternate' }}
+        </span>
+        <div class="text-center">
+          <p class="text-sm font-medium text-surface-700 dark:text-surface-300">
+            {{ 'tasks.form.dropzone.title' | translate }}
+          </p>
+          <p class="mt-0.5 text-xs text-muted-color">
+            {{ 'tasks.form.dropzone.subtitle' | translate }}
+          </p>
+        </div>
+      }
+    </div>
   </div>
 
-  <div class="mt-2 flex justify-end gap-3">
+  <!-- Acciones -->
+  <div class="flex justify-end gap-3 pt-1">
     <p-button
       type="button"
       [label]="'common.cancel' | translate"
@@ -75,4 +125,5 @@
     />
     <p-button type="submit" [label]="'common.save' | translate" [loading]="saving()" />
   </div>
+
 </form>

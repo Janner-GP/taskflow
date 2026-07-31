@@ -2,7 +2,9 @@
   "shell": {
     "nav": {
       "tasks": "Tareas",
-      "login": "Entrar"
+      "login": "Entrar",
+      "language": "Idioma",
+      "theme": "Tema"
     },
     "toggleTheme": "Cambiar tema claro/oscuro",
     "logout": "Salir",
@@ -105,11 +107,19 @@
     "form": {
       "createTitle": "Nueva tarea",
       "editTitle": "Editar tarea",
+      "attachImage": "Adjuntar imagen",
       "fields": {
         "title": "Título",
         "description": "Descripción",
         "priority": "Prioridad",
-        "dueDate": "Fecha límite"
+        "dueDate": "Fecha límite",
+        "attachment": "Imagen adjunta"
+      },
+      "dropzone": {
+        "title": "Arrastra una imagen aquí",
+        "subtitle": "O haz clic para seleccionar · JPEG, PNG o WebP · máx. 5 MB",
+        "remove": "Eliminar imagen",
+        "aria": "Zona de carga de imagen"
       },
       "errors": {
         "required": "Este campo es obligatorio.",

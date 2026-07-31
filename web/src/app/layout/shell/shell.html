@@ -1,46 +1,89 @@
 <div class="flex min-h-screen flex-col">
-  <header
-    class="sticky top-0 z-10 border-b border-surface bg-surface-0/85 backdrop-blur dark:bg-surface-900/85"
-  >
-    <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3">
-      <a routerLink="/tasks" class="flex items-center gap-2 font-semibold tracking-tight">
-        <span class="grid size-8 place-items-center rounded-control bg-primary-600 text-primary-contrast">TF</span>
-        <span>TaskFlow</span>
+
+  <header class="sticky top-0 z-10 border-b border-surface bg-surface-0/90 backdrop-blur dark:bg-surface-900/90">
+    <div class="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
+
+      <!-- Logo -->
+      <a routerLink="/tasks" class="flex shrink-0 items-center gap-2 font-semibold tracking-tight">
+        <span class="grid size-8 place-items-center rounded-control bg-primary-600 text-sm font-bold text-primary-contrast">
+          TF
+        </span>
+        <span class="hidden sm:block">TaskFlow</span>
       </a>
 
+      <!-- Nav -->
       <nav class="flex items-center gap-1 text-sm">
         <a
           routerLink="/tasks"
-          routerLinkActive="bg-emphasis text-color"
-          class="rounded-control px-3 py-1.5 text-muted-color transition-colors hover:bg-emphasis"
+          routerLinkActive="bg-emphasis text-color font-medium"
+          class="rounded-control px-3 py-1.5 text-muted-color transition-colors hover:bg-emphasis hover:text-color"
         >
           {{ 'shell.nav.tasks' | translate }}
         </a>
       </nav>
 
-      <div class="ml-auto flex items-center gap-2">
-        <span class="hidden items-center gap-2 pr-1 sm:flex">
+      <!-- Usuario con dropdown -->
+      <div class="relative ml-auto">
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-control px-2 py-1.5 text-sm transition-colors hover:bg-emphasis"
+          (click)="dropdownOpen.set(!dropdownOpen())"
+        >
           <span
-            class="grid size-8 place-items-center rounded-full bg-emphasis text-xs font-semibold"
+            class="grid size-7 place-items-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-200"
             aria-hidden="true"
           >
             {{ store.initials() }}
           </span>
-          <span class="max-w-40 truncate text-sm font-medium">{{ store.displayName() }}</span>
-        </span>
+          <span class="hidden max-w-36 truncate font-medium sm:block">{{ store.displayName() }}</span>
+          <span
+            class="material-symbols-outlined text-base text-muted-color transition-transform duration-200"
+            [class.rotate-180]="dropdownOpen()"
+            style="font-size:18px"
+          >expand_more</span>
+        </button>
 
-        <app-language-switcher />
-        <app-theme-toggle />
+        @if (dropdownOpen()) {
+          <!-- Backdrop para cerrar al hacer clic fuera -->
+          <div class="fixed inset-0 z-40" (click)="dropdownOpen.set(false)"></div>
 
-        <p-button
-          severity="secondary"
-          size="small"
-          [text]="true"
-          [label]="'shell.logout' | translate"
-          [loading]="store.loading()"
-          (onClick)="logout()"
-        />
+          <!-- Panel del menú -->
+          <div class="absolute right-0 top-full z-50 mt-1.5 min-w-48 rounded-xl border border-surface bg-surface-0 shadow-raised dark:bg-surface-900">
+            <!-- Info usuario -->
+            <div class="border-b border-surface px-4 py-3">
+              <p class="truncate text-sm font-medium">{{ store.displayName() }}</p>
+            </div>
+
+            <div class="p-1.5 flex flex-col gap-0.5">
+              <!-- Idioma -->
+              <div class="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-emphasis">
+                <span class="text-muted-color">{{ 'shell.nav.language' | translate }}</span>
+                <app-language-switcher />
+              </div>
+
+              <!-- Tema -->
+              <div class="flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-emphasis">
+                <span class="text-muted-color">{{ 'shell.nav.theme' | translate }}</span>
+                <app-theme-toggle />
+              </div>
+
+              <hr class="my-1 border-surface">
+
+              <!-- Cerrar sesión -->
+              <button
+                type="button"
+                class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+                [class.opacity-60]="store.loading()"
+                (click)="logout(); dropdownOpen.set(false)"
+              >
+                <span class="material-symbols-outlined" style="font-size:18px">logout</span>
+                {{ 'shell.logout' | translate }}
+              </button>
+            </div>
+          </div>
+        }
       </div>
+
     </div>
   </header>
 
@@ -49,8 +92,9 @@
   </main>
 
   <footer class="border-t border-surface">
-    <p class="mx-auto max-w-5xl px-6 py-4 text-sm text-muted-color">
+    <p class="mx-auto max-w-5xl px-4 py-4 text-sm text-muted-color sm:px-6">
       {{ 'shell.footer' | translate }}
     </p>
   </footer>
+
 </div>

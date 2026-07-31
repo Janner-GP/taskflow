@@ -129,44 +129,44 @@ Tres reglas que sostienen la separación:
 
 ### Backend
 
-| Tecnología | Motivo |
-|---|---|
-| **NestJS 11** | Módulos y DI nativos; la arquitectura hexagonal sale natural. Decoradores `@ApiProperty` generan OpenAPI sin archivos de spec adicionales |
-| **Prisma 6** | Tipado end-to-end y migraciones versionadas. Encapsulado tras puertos, porque el cliente es infraestructura, no dominio |
-| **PostgreSQL** | Relacional cerrado (usuario ⇄ tareas); índices compuestos para filtros y paginación en BD |
-| **JWT + cookies httpOnly** | Cookies evitan acceso JS al token (XSS); Bearer tokens son compatibles con WebView/mobile sin fricciones |
-| **@aws-sdk/client-s3 v3** | SDK modular tree-shakeable; sin herencia de la API v2 |
-| **nestjs-i18n** | Mensajes de error localizados (es/en) desde archivos JSON; sin strings hardcodeados |
-| **Zod** | Validación del entorno al arrancar; falla rápido con mensaje legible si falta una variable |
+| Tecnología                      | Motivo                                                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **NestJS 11**              | Módulos y DI nativos; la arquitectura hexagonal sale natural. Decoradores`@ApiProperty` generan OpenAPI sin archivos de spec adicionales |
+| **Prisma 6**               | Tipado end-to-end y migraciones versionadas. Encapsulado tras puertos, porque el cliente es infraestructura, no dominio                     |
+| **PostgreSQL**             | Relacional cerrado (usuario ⇄ tareas); índices compuestos para filtros y paginación en BD                                                |
+| **JWT + cookies httpOnly** | Cookies evitan acceso JS al token (XSS); Bearer tokens son compatibles con WebView/mobile sin fricciones                                    |
+| **@aws-sdk/client-s3 v3**  | SDK modular tree-shakeable; sin herencia de la API v2                                                                                       |
+| **nestjs-i18n**            | Mensajes de error localizados (es/en) desde archivos JSON; sin strings hardcodeados                                                         |
+| **Zod**                    | Validación del entorno al arrancar; falla rápido con mensaje legible si falta una variable                                                |
 
 ### Web
 
-| Tecnología | Motivo |
-|---|---|
-| **Angular 21** | SPA con TypeScript estricto, standalone components, zoneless (rendimiento sin Zone.js) |
+| Tecnología                  | Motivo                                                                                          |
+| ---------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Angular 21**         | SPA con TypeScript estricto, standalone components, zoneless (rendimiento sin Zone.js)          |
 | **NgRx Signals Store** | Es NgRx oficial sin el boilerplate de actions/reducers/effects; integra nativamente con Signals |
-| **PrimeNG 21** | Componentes ricos de escritorio (tabla, dialog, datepicker) sin implementarlos desde cero |
+| **PrimeNG 21**         | Componentes ricos de escritorio (tabla, dialog, datepicker) sin implementarlos desde cero       |
 
 > **Por qué Angular 21 y no 22:** `@ngrx/signals@21` declara peer `@angular/core: ^21`. No existe combinación estable con Angular 22 + NgRx + PrimeNG sin dependencias beta. Angular 21 alinea todo el stack con un `npm install` limpio.
 
 ### Mobile
 
-| Tecnología | Motivo |
-|---|---|
-| **Ionic 8 + Angular** | Componentes mobile-first, comparte la lógica con el equipo web |
-| **Capacitor 7** | Bridge nativo moderno; acceso a cámara, biometría y notificaciones con API unificada |
-| **@capacitor/camera** | Foto nativa o galería en device; fallback a `<input type="file">` en browser |
+| Tecnología                 | Motivo                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| **Ionic 8 + Angular** | Componentes mobile-first, comparte la lógica con el equipo web                        |
+| **Capacitor 7**       | Bridge nativo moderno; acceso a cámara, biometría y notificaciones con API unificada |
+| **@capacitor/camera** | Foto nativa o galería en device; fallback a`<input type="file">` en browser         |
 
 ### Infraestructura
 
-| Servicio | Motivo |
-|---|---|
-| **ECS Fargate** | Contenedores sin gestionar servidores; pago por uso |
-| **ECR** | Registry privado en la misma cuenta; sin coste de transferencia intra-región |
-| **RDS PostgreSQL** | Managed DB: backups automáticos, failover sin overhead de ops |
-| **S3** | Almacenamiento de objetos de bajo coste; URL pública directa sin servidor de assets |
-| **ALB** | Ruteo path-based: `/api/*` → backend, `/*` → web; health checks integrados |
-| **GitHub Actions** | CI/CD en el repo; secrets nativos; sin infraestructura extra |
+| Servicio                 | Motivo                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| **ECS Fargate**    | Contenedores sin gestionar servidores; pago por uso                                  |
+| **ECR**            | Registry privado en la misma cuenta; sin coste de transferencia intra-región        |
+| **RDS PostgreSQL** | Managed DB: backups automáticos, failover sin overhead de ops                       |
+| **S3**             | Almacenamiento de objetos de bajo coste; URL pública directa sin servidor de assets |
+| **ALB**            | Ruteo path-based:`/api/*` → backend, `/*` → web; health checks integrados      |
+| **GitHub Actions** | CI/CD en el repo; secrets nativos; sin infraestructura extra                         |
 
 ---
 
@@ -228,30 +228,30 @@ El emulador Android no ve `localhost` del host: la app usa `http://10.0.2.2:3000
 
 Todas con comentarios en [`.env.example`](.env.example).
 
-| Variable | Descripción |
-|---|---|
-| `DATABASE_URL` | URL de conexión PostgreSQL (Prisma) |
-| `NODE_ENV` | `development` / `production` |
-| `PORT` | Puerto HTTP del backend (defecto `3000`) |
-| `SWAGGER_ENABLED` | Activa `/api/docs`; `false` en producción |
-| `JWT_ACCESS_SECRET` | Secreto para firmar access tokens (≥ 48 bytes) |
-| `JWT_REFRESH_SECRET` | Secreto para firmar refresh tokens (distinto del anterior) |
-| `COOKIE_SECRET` | Secreto para firmar cookies (distinto de los anteriores) |
-| `ACCESS_TOKEN_TTL` | Duración del access token (ej. `15m`) |
-| `REFRESH_TOKEN_TTL` | Duración del refresh token (ej. `7d`) |
-| `BCRYPT_ROUNDS` | Factor de coste de bcrypt (recomendado `12`) |
-| `CORS_ORIGIN` | Lista de orígenes separada por comas, nunca `*` |
-| `APP_PUBLIC_URL` | URL pública de la aplicación |
-| `THROTTLE_TTL` | Ventana de rate limiting en segundos |
-| `THROTTLE_LIMIT` | Máximo de peticiones por ventana en `/auth/*` |
-| `TRUSTED_PROXY_IP` | IP del proxy de confianza para `X-Forwarded-For` |
-| `AWS_REGION` | Región AWS (ej. `us-east-2`) |
-| `AWS_ACCESS_KEY_ID` | Clave IAM con permisos S3 |
-| `AWS_SECRET_ACCESS_KEY` | Secreto IAM correspondiente |
-| `S3_BUCKET_NAME` | Nombre del bucket S3 para imágenes adjuntas |
-| `POSTGRES_DB/USER/PASSWORD` | Solo para el compose de dev (contenedor local) |
-| `WEB_API_URL` | Base URL de la API inyectada en build time (web) |
-| `MOBILE_API_URL` | URL completa de la API inyectada en build time (mobile) |
+| Variable                      | Descripción                                               |
+| ----------------------------- | ---------------------------------------------------------- |
+| `DATABASE_URL`              | URL de conexión PostgreSQL (Prisma)                       |
+| `NODE_ENV`                  | `development` / `production`                           |
+| `PORT`                      | Puerto HTTP del backend (defecto`3000`)                  |
+| `SWAGGER_ENABLED`           | Activa`/api/docs`; `false` en producción              |
+| `JWT_ACCESS_SECRET`         | Secreto para firmar access tokens (≥ 48 bytes)            |
+| `JWT_REFRESH_SECRET`        | Secreto para firmar refresh tokens (distinto del anterior) |
+| `COOKIE_SECRET`             | Secreto para firmar cookies (distinto de los anteriores)   |
+| `ACCESS_TOKEN_TTL`          | Duración del access token (ej.`15m`)                    |
+| `REFRESH_TOKEN_TTL`         | Duración del refresh token (ej.`7d`)                    |
+| `BCRYPT_ROUNDS`             | Factor de coste de bcrypt (recomendado`12`)              |
+| `CORS_ORIGIN`               | Lista de orígenes separada por comas, nunca`*`          |
+| `APP_PUBLIC_URL`            | URL pública de la aplicación                             |
+| `THROTTLE_TTL`              | Ventana de rate limiting en segundos                       |
+| `THROTTLE_LIMIT`            | Máximo de peticiones por ventana en`/auth/*`            |
+| `TRUSTED_PROXY_IP`          | IP del proxy de confianza para`X-Forwarded-For`          |
+| `AWS_REGION`                | Región AWS (ej.`us-east-2`)                             |
+| `AWS_ACCESS_KEY_ID`         | Clave IAM con permisos S3                                  |
+| `AWS_SECRET_ACCESS_KEY`     | Secreto IAM correspondiente                                |
+| `S3_BUCKET_NAME`            | Nombre del bucket S3 para imágenes adjuntas               |
+| `POSTGRES_DB/USER/PASSWORD` | Solo para el compose de dev (contenedor local)             |
+| `WEB_API_URL`               | Base URL de la API inyectada en build time (web)           |
+| `MOBILE_API_URL`            | URL completa de la API inyectada en build time (mobile)    |
 
 ---
 
@@ -282,19 +282,19 @@ Al terminar, imprime la tabla de GitHub Secrets con el DNS del ALB.
 
 `GitHub repo → Settings → Secrets and variables → Actions`
 
-| Secret | Valor |
-|---|---|
-| `AWS_REGION` | `us-east-2` |
-| `AWS_ACCOUNT_ID` | ID numérico de la cuenta AWS |
-| `AWS_ACCESS_KEY_ID` | Clave IAM del usuario de deploy |
-| `AWS_SECRET_ACCESS_KEY` | Secreto IAM |
-| `DATABASE_URL` | URL de conexión a RDS (con password URL-encoded) |
-| `JWT_ACCESS_SECRET` | `openssl rand -base64 48` |
-| `JWT_REFRESH_SECRET` | `openssl rand -base64 48` (distinto) |
-| `COOKIE_SECRET` | `openssl rand -base64 48` (distinto) |
-| `S3_BUCKET_NAME` | `taskflow-storage` |
-| `CORS_ORIGIN` | `http://<ALB-DNS>` (lo imprime setup.sh) |
-| `APP_PUBLIC_URL` | `http://<ALB-DNS>` |
+| Secret                    | Valor                                             |
+| ------------------------- | ------------------------------------------------- |
+| `AWS_REGION`            | `us-east-2`                                     |
+| `AWS_ACCOUNT_ID`        | ID numérico de la cuenta AWS                     |
+| `AWS_ACCESS_KEY_ID`     | Clave IAM del usuario de deploy                   |
+| `AWS_SECRET_ACCESS_KEY` | Secreto IAM                                       |
+| `DATABASE_URL`          | URL de conexión a RDS (con password URL-encoded) |
+| `JWT_ACCESS_SECRET`     | `openssl rand -base64 48`                       |
+| `JWT_REFRESH_SECRET`    | `openssl rand -base64 48` (distinto)            |
+| `COOKIE_SECRET`         | `openssl rand -base64 48` (distinto)            |
+| `S3_BUCKET_NAME`        | `taskflow-storage`                              |
+| `CORS_ORIGIN`           | `http://<ALB-DNS>` (lo imprime setup.sh)        |
+| `APP_PUBLIC_URL`        | `http://<ALB-DNS>`                              |
 
 ### Paso 3 — Deploy
 
@@ -321,14 +321,14 @@ El pipeline CI/CD (`.github/workflows/ci.yml`) ejecuta:
 
 ### Doble transporte de autenticación
 
-|  | Web | Mobile |
-|---|---|---|
-| Transporte | Cookies `httpOnly` `Secure` `SameSite=Lax` | `Authorization: Bearer` |
-| Cómo se indica | Header `X-Client: web` (defecto) | Header `X-Client: mobile` |
-| Access token | 15 min, cookie opaca para JS | 15 min, en memoria |
-| Refresh token | 7 d, cookie `httpOnly` | 7 d, secure storage nativo |
-| Rehidratar sesión | `GET /api/auth/me` al arrancar | leer secure storage → refresh |
-| CSRF | double-submit: `XSRF-TOKEN` + `X-XSRF-TOKEN` | no aplica |
+|                    | Web                                             | Mobile                         |
+| ------------------ | ----------------------------------------------- | ------------------------------ |
+| Transporte         | Cookies`httpOnly` `Secure` `SameSite=Lax` | `Authorization: Bearer`      |
+| Cómo se indica    | Header`X-Client: web` (defecto)               | Header`X-Client: mobile`     |
+| Access token       | 15 min, cookie opaca para JS                    | 15 min, en memoria             |
+| Refresh token      | 7 d, cookie`httpOnly`                         | 7 d, secure storage nativo     |
+| Rehidratar sesión | `GET /api/auth/me` al arrancar                | leer secure storage → refresh |
+| CSRF               | double-submit:`XSRF-TOKEN` + `X-XSRF-TOKEN` | no aplica                      |
 
 Las cookies `httpOnly` hacen el JWT inaccesible a JavaScript, cerrando la superficie de XSS. Mobile usa Bearer porque las cookies en WebView son frágiles y el refresh en secure storage habilita el desbloqueo biométrico.
 
@@ -375,13 +375,13 @@ La API viaja con credenciales (`withCredentials: true`). El navegador rechaza `A
 
 > Las capturas se añaden tras el primer despliegue en AWS.
 
-| Vista | Descripción |
-|---|---|
-| `docs/screenshots/web-login.png` | Pantalla de login — SPA web |
-| `docs/screenshots/web-tasks.png` | Lista de tareas con filtros y thumbnails |
-| `docs/screenshots/web-task-form.png` | Formulario de creación con adjunto de imagen |
-| `docs/screenshots/mobile-login.png` | Login en la app móvil |
-| `docs/screenshots/mobile-tasks.png` | Lista de tareas en Ionic con thumbnail |
+| Vista                                  | Descripción                                       |
+| -------------------------------------- | -------------------------------------------------- |
+| `docs/screenshots/web-login.png`     | Pantalla de login — SPA web                       |
+| `docs/screenshots/web-tasks.png`     | Lista de tareas con filtros y thumbnails           |
+| `docs/screenshots/web-task-form.png` | Formulario de creación con adjunto de imagen      |
+| `docs/screenshots/mobile-login.png`  | Login en la app móvil                             |
+| `docs/screenshots/mobile-tasks.png`  | Lista de tareas en Ionic con thumbnail             |
 | `docs/screenshots/mobile-camera.png` | Modal de creación con opciones cámara / galería |
 
 ---

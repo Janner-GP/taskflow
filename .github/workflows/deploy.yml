@@ -201,9 +201,20 @@ jobs:
           SUBNETS=$(echo "$NET" | python3 -c "import sys,json; d=json.load(sys.stdin); print(','.join(d['subnets']))")
           SGS=$(echo    "$NET" | python3 -c "import sys,json; d=json.load(sys.stdin); print(','.join(d['securityGroups']))")
 
-          # Overrides: solo ejecutar la migración, sin arrancar la app
-          printf '%s' '{"containerOverrides":[{"name":"backend","command":["node_modules/.bin/prisma","migrate","deploy"]}]}' \
-            > /tmp/migrate-overrides.json
+          echo "Subnets: $SUBNETS | SGs: $SGS"
+
+          # Escribir overrides a archivo usando python para evitar problemas de quoting
+          python3 -c "
+import json
+overrides = {
+  'containerOverrides': [{
+    'name': 'backend',
+    'command': ['node_modules/.bin/prisma', 'migrate', 'deploy']
+  }]
+}
+with open('/tmp/migrate-overrides.json', 'w') as f:
+    json.dump(overrides, f)
+"
 
           TASK_ARN=$(aws ecs run-task \
             --cluster "$CLUSTER" \
@@ -215,6 +226,7 @@ jobs:
             --query 'tasks[0].taskArn' --output text)
 
           echo "Migration task: $TASK_ARN"
+          [ -z "$TASK_ARN" ] || [ "$TASK_ARN" = "None" ] && { echo "Error al lanzar el task de migración."; exit 1; }
 
           # Esperar hasta que el task termine (máx ~5 min)
           aws ecs wait tasks-stopped \

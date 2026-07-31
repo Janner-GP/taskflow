@@ -17,6 +17,7 @@ FROM nginx:1.27-alpine AS prod
 
 # El build de Angular escribe en dist/web/browser (Angular 21 esbuild)
 COPY --from=build /app/dist/web/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# En prod el ALB ya enruta /api/* al backend; nginx solo sirve el SPA estático.
+COPY nginx.prod.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

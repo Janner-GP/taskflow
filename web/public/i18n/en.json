@@ -2,7 +2,9 @@
   "shell": {
     "nav": {
       "tasks": "Tasks",
-      "login": "Sign in"
+      "login": "Sign in",
+      "language": "Language",
+      "theme": "Theme"
     },
     "toggleTheme": "Toggle light/dark theme",
     "logout": "Sign out",
@@ -105,11 +107,19 @@
     "form": {
       "createTitle": "New task",
       "editTitle": "Edit task",
+      "attachImage": "Attach image",
       "fields": {
         "title": "Title",
         "description": "Description",
         "priority": "Priority",
-        "dueDate": "Due date"
+        "dueDate": "Due date",
+        "attachment": "Attachment"
+      },
+      "dropzone": {
+        "title": "Drop an image here",
+        "subtitle": "Or click to select · JPEG, PNG or WebP · max 5 MB",
+        "remove": "Remove image",
+        "aria": "Image upload area"
       },
       "errors": {
         "required": "This field is required.",

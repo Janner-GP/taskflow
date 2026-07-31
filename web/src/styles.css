@@ -29,6 +29,100 @@
  * `darkModeSelector` de PrimeNG para que ambos conmuten a la vez. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Material Symbols como reemplazo de PrimeIcons ──────────────────────────
+ * El .pi base apunta a Material Symbols Outlined; cada .pi-xxx define el
+ * texto de ligadura equivalente vía ::before. La capa `components` viene
+ * después de `primeng` en el orden de capas, por lo que estos estilos
+ * siempre ganan a los que pudiera inyectar PrimeNG.                        */
+@layer components {
+  .pi {
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: -0.125em;
+  }
+
+  .pi::before {
+    font-family: 'Material Symbols Outlined';
+    font-weight: 400;
+    font-style: normal;
+    font-size: inherit;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Spinner animado */
+  .pi-spin { animation: tf-spin 1.4s linear infinite; }
+  @keyframes tf-spin { to { transform: rotate(360deg); } }
+
+  /* ── Mapa pi-xxx → nombre de ligadura Material Symbols ─────────────── */
+  .pi-plus::before               { content: 'add'; }
+  .pi-minus::before              { content: 'remove'; }
+  .pi-times::before              { content: 'close'; }
+  .pi-times-circle::before       { content: 'cancel'; }
+  .pi-check::before              { content: 'check'; }
+  .pi-check-circle::before       { content: 'check_circle'; }
+  .pi-search::before             { content: 'search'; }
+  .pi-pencil::before             { content: 'edit'; }
+  .pi-trash::before              { content: 'delete'; }
+  .pi-calendar::before           { content: 'calendar_today'; }
+  .pi-image::before              { content: 'image'; }
+  .pi-eye::before                { content: 'visibility'; }
+  .pi-eye-slash::before          { content: 'visibility_off'; }
+  .pi-chevron-down::before       { content: 'expand_more'; }
+  .pi-chevron-up::before         { content: 'expand_less'; }
+  .pi-chevron-left::before       { content: 'chevron_left'; }
+  .pi-chevron-right::before      { content: 'chevron_right'; }
+  .pi-angle-left::before         { content: 'chevron_left'; }
+  .pi-angle-right::before        { content: 'chevron_right'; }
+  .pi-angle-double-left::before  { content: 'first_page'; }
+  .pi-angle-double-right::before { content: 'last_page'; }
+  .pi-exclamation-triangle::before { content: 'warning'; }
+  .pi-info-circle::before        { content: 'info'; }
+  .pi-spinner::before            { content: 'progress_activity'; }
+  .pi-refresh::before            { content: 'refresh'; }
+  .pi-filter::before             { content: 'filter_list'; }
+  .pi-cog::before                { content: 'settings'; }
+  .pi-user::before               { content: 'person'; }
+  .pi-sign-out::before           { content: 'logout'; }
+  .pi-language::before           { content: 'translate'; }
+  .pi-moon::before               { content: 'dark_mode'; }
+  .pi-sun::before                { content: 'light_mode'; }
+  .pi-list::before               { content: 'list'; }
+  .pi-th-large::before           { content: 'grid_view'; }
+  .pi-home::before               { content: 'home'; }
+  .pi-star::before               { content: 'star'; }
+  .pi-ban::before                { content: 'block'; }
+  .pi-lock::before               { content: 'lock'; }
+  .pi-unlock::before             { content: 'lock_open'; }
+  .pi-bell::before               { content: 'notifications'; }
+  .pi-globe::before              { content: 'language'; }
+  .pi-arrow-left::before         { content: 'arrow_back'; }
+  .pi-arrow-right::before        { content: 'arrow_forward'; }
+  .pi-upload::before             { content: 'upload'; }
+  .pi-download::before           { content: 'download'; }
+  .pi-send::before               { content: 'send'; }
+  .pi-external-link::before      { content: 'open_in_new'; }
+  .pi-ellipsis-v::before         { content: 'more_vert'; }
+  .pi-ellipsis-h::before         { content: 'more_horiz'; }
+  .pi-file::before               { content: 'description'; }
+  .pi-folder::before             { content: 'folder'; }
+  .pi-tag::before                { content: 'label'; }
+  .pi-sort-amount-up::before     { content: 'arrow_upward'; }
+  .pi-sort-amount-down::before   { content: 'arrow_downward'; }
+  .pi-circle::before             { content: 'radio_button_unchecked'; }
+  .pi-circle-fill::before        { content: 'radio_button_checked'; }
+  .pi-power-off::before          { content: 'power_settings_new'; }
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);

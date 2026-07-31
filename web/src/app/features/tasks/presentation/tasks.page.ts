@@ -209,6 +209,11 @@ export class TasksPage {
     });
   }
 
+  protected onDialogHide(): void {
+    this.editing.set(null);
+    this.taskFormRef()?.resetForm();
+  }
+
   protected retry(): void {
     this.store.clearError();
     void this.store.load();

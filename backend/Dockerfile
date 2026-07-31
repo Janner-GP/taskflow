@@ -32,6 +32,9 @@ ENV NODE_ENV=production
 # Solo lo necesario en runtime
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prod_modules/node_modules ./node_modules
+# El Prisma Client generado vive en .prisma/client/ dentro del build stage.
+# prod_modules solo tiene deps de producción sin regenerar; hay que copiarlo explícitamente.
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./
 

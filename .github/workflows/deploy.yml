@@ -202,6 +202,7 @@ jobs:
             --region "$AWS_REGION" > /dev/null
 
       - name: Esperar estabilización (máx 10 min)
+        timeout-minutes: 12
         run: |
           aws ecs wait services-stable \
             --cluster "$CLUSTER" \

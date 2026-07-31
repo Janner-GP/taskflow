@@ -41,7 +41,11 @@ export class UploadTaskAttachment {
       }
     }
 
-    const { url } = await this.storage.upload(cmd.buffer, cmd.mimeType, cmd.ext);
+    const { url } = await this.storage.upload(
+      cmd.buffer,
+      cmd.mimeType,
+      cmd.ext,
+    );
 
     return this.tasks.update(cmd.taskId, { attachmentUrl: url });
   }

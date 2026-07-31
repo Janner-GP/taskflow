@@ -45,7 +45,9 @@ export class S3StorageService implements StorageServicePort {
 
     // Deduplicación: si el objeto ya existe, devuelve la URL sin re-subir.
     try {
-      await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+      await this.client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: key }),
+      );
       return { url, key };
     } catch {
       // No existe — continuar con la subida.
@@ -71,7 +73,9 @@ export class S3StorageService implements StorageServicePort {
     });
 
     if (otherRefs === 0) {
-      await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+      await this.client.send(
+        new DeleteObjectCommand({ Bucket: this.bucket, Key: key }),
+      );
     }
   }
 }

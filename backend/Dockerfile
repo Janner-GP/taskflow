@@ -34,4 +34,6 @@ COPY --from=build /app/prisma ./prisma
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+# prisma migrate deploy aplica migraciones pendientes antes de arrancar.
+# Si falla (DB no disponible, credencial incorrecta) el contenedor sale y ECS lo reintenta.
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main.js"]

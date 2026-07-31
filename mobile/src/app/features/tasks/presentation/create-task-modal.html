@@ -61,6 +61,7 @@
         @if (capturedPhoto()) {
           <img
             [src]="'data:image/' + capturedPhoto()!.format + ';base64,' + capturedPhoto()!.base64"
+            alt="Foto adjunta"
             style="max-height:120px; border-radius:8px; margin-top:8px"
           >
         }

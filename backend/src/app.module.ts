@@ -4,7 +4,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AcceptLanguageResolver, HeaderResolver, I18nModule } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nModule,
+} from 'nestjs-i18n';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';

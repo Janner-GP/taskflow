@@ -58,7 +58,6 @@ const EXT_BY_MIME: Record<string, string> = {
 @ApiCookieAuth('access_token')
 @UseGuards(JwtAuthGuard)
 @Controller('tasks')
-
 export class TasksController {
   constructor(
     private readonly createTask: CreateTask,
@@ -224,9 +223,21 @@ export class TasksController {
     },
   })
   @ApiCreatedResponse({ type: TaskEnvelopeDto })
-  @ApiResponse({ status: 400, description: 'Tipo de archivo no permitido', type: ApiErrorDto })
-  @ApiResponse({ status: 401, description: 'UNAUTHENTICATED', type: ApiErrorDto })
-  @ApiResponse({ status: 404, description: 'TASK_NOT_FOUND', type: ApiErrorDto })
+  @ApiResponse({
+    status: 400,
+    description: 'Tipo de archivo no permitido',
+    type: ApiErrorDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'UNAUTHENTICATED',
+    type: ApiErrorDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'TASK_NOT_FOUND',
+    type: ApiErrorDto,
+  })
   async uploadAttachment(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -237,7 +248,9 @@ export class TasksController {
     }
 
     if (!ALLOWED_MIMETYPES.has(file.mimetype)) {
-      throw new BadRequestException('Solo se permiten imágenes JPEG, PNG o WebP.');
+      throw new BadRequestException(
+        'Solo se permiten imágenes JPEG, PNG o WebP.',
+      );
     }
 
     const task = await this.uploadTaskAttachment.execute({

@@ -38,6 +38,6 @@ export class MessageEnvelopeInterceptor implements NestInterceptor {
 
     return next
       .handle()
-      .pipe(map((data) => ({ data: data ?? null, message })));
+      .pipe(map((data: unknown) => ({ data: data ?? null, message })));
   }
 }

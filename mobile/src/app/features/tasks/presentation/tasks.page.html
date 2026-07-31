@@ -66,7 +66,7 @@
               <p class="text-content-muted text-xs">{{ task.dueDate | date: 'mediumDate' }}</p>
             }
             @if (task.attachmentUrl) {
-              <img [src]="task.attachmentUrl" style="max-height:80px; border-radius:4px; margin-top:4px">
+              <img [src]="task.attachmentUrl" alt="Adjunto de tarea" style="max-height:80px; border-radius:4px; margin-top:4px">
             }
           </ion-label>
           <ion-badge slot="end" [color]="statusColor(task.status)">

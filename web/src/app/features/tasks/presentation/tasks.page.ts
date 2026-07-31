@@ -183,7 +183,11 @@ export class TasksPage {
 
   protected async toggle(task: Task): Promise<void> {
     const outcome = await this.store.toggleStatus(task);
-    outcome.ok ? this.toastSuccess(outcome.message) : this.toastError(outcome.message);
+    if (outcome.ok) {
+      this.toastSuccess(outcome.message);
+    } else {
+      this.toastError(outcome.message);
+    }
   }
 
   protected confirmDelete(task: Task): void {
@@ -196,7 +200,11 @@ export class TasksPage {
       acceptButtonStyleClass: 'p-button-danger',
       accept: async () => {
         const outcome = await this.store.remove(task.id);
-        outcome.ok ? this.toastSuccess(outcome.message) : this.toastError(outcome.message);
+        if (outcome.ok) {
+          this.toastSuccess(outcome.message);
+        } else {
+          this.toastError(outcome.message);
+        }
       },
     });
   }

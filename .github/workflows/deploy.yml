@@ -202,9 +202,8 @@ jobs:
           SGS=$(echo    "$NET" | python3 -c "import sys,json; d=json.load(sys.stdin); print(','.join(d['securityGroups']))")
 
           # Overrides: solo ejecutar la migración, sin arrancar la app
-          cat > /tmp/migrate-overrides.json <<'ENDJSON'
-          {"containerOverrides":[{"name":"backend","command":["node_modules/.bin/prisma","migrate","deploy"]}]}
-          ENDJSON
+          printf '%s' '{"containerOverrides":[{"name":"backend","command":["node_modules/.bin/prisma","migrate","deploy"]}]}' \
+            > /tmp/migrate-overrides.json
 
           TASK_ARN=$(aws ecs run-task \
             --cluster "$CLUSTER" \

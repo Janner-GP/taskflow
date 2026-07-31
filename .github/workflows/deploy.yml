@@ -186,6 +186,51 @@ jobs:
             --container-definitions file:///tmp/web-td.json \
             --region "$AWS_REGION" > /dev/null
 
+      # ── Migraciones ───────────────────────────────────────────────────────────
+      # Paso crítico: corre prisma migrate deploy como task ECS one-shot antes
+      # de desplegar el servicio. Si falla, el job se detiene aquí.
+      - name: Ejecutar migraciones (crítico)
+        run: |
+          # Reutilizar la configuración de red del servicio existente
+          NET=$(aws ecs describe-services \
+            --cluster "$CLUSTER" --services taskflow-backend \
+            --region "$AWS_REGION" \
+            --query 'services[0].networkConfiguration.awsvpcConfiguration' \
+            --output json)
+
+          SUBNETS=$(echo "$NET" | python3 -c "import sys,json; d=json.load(sys.stdin); print(','.join(d['subnets']))")
+          SGS=$(echo    "$NET" | python3 -c "import sys,json; d=json.load(sys.stdin); print(','.join(d['securityGroups']))")
+
+          # Overrides: solo ejecutar la migración, sin arrancar la app
+          cat > /tmp/migrate-overrides.json <<'ENDJSON'
+          {"containerOverrides":[{"name":"backend","command":["node_modules/.bin/prisma","migrate","deploy"]}]}
+          ENDJSON
+
+          TASK_ARN=$(aws ecs run-task \
+            --cluster "$CLUSTER" \
+            --task-definition taskflow-backend \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SGS],assignPublicIp=ENABLED}" \
+            --overrides file:///tmp/migrate-overrides.json \
+            --region "$AWS_REGION" \
+            --query 'tasks[0].taskArn' --output text)
+
+          echo "Migration task: $TASK_ARN"
+
+          # Esperar hasta que el task termine (máx ~5 min)
+          aws ecs wait tasks-stopped \
+            --cluster "$CLUSTER" --tasks "$TASK_ARN" \
+            --region "$AWS_REGION"
+
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster "$CLUSTER" --tasks "$TASK_ARN" \
+            --region "$AWS_REGION" \
+            --query 'tasks[0].containers[0].exitCode' --output text)
+
+          echo "Migration exit code: $EXIT_CODE"
+          [ "$EXIT_CODE" = "0" ] || { echo "Migraciones fallaron — deploy cancelado."; exit 1; }
+          echo "Migraciones aplicadas correctamente."
+
       # ── Deploy ────────────────────────────────────────────────────────────────
       - name: Deploy servicios ECS
         run: |
@@ -201,13 +246,31 @@ jobs:
             --force-new-deployment \
             --region "$AWS_REGION" > /dev/null
 
-      - name: Esperar estabilización (máx 10 min)
-        timeout-minutes: 12
+      - name: Esperar estabilización (máx 8 min)
+        timeout-minutes: 10
         run: |
-          aws ecs wait services-stable \
-            --cluster "$CLUSTER" \
-            --services taskflow-backend taskflow-web \
-            --region "$AWS_REGION"
+          for i in $(seq 1 32); do
+            STATES=$(aws ecs describe-services \
+              --cluster "$CLUSTER" \
+              --services taskflow-backend taskflow-web \
+              --region "$AWS_REGION" \
+              --query 'services[*].deployments[?status==`PRIMARY`].{r:runningCount,d:desiredCount}' \
+              --output json)
+            # Estable = ambos PRIMARY tienen runningCount == desiredCount > 0
+            OK=$(echo "$STATES" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+stable = all(
+  any(dep['r'] == dep['d'] and dep['d'] > 0 for dep in svc)
+  for svc in data
+)
+print('yes' if stable else 'no')
+")
+            echo "Check $i/32: $OK"
+            [ "$OK" = "yes" ] && echo "Servicios estables." && exit 0
+            sleep 15
+          done
+          echo "Timeout esperando estabilización." && exit 1
 
       - name: URL de la aplicación
         run: |

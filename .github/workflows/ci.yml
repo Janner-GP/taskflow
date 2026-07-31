@@ -26,7 +26,8 @@ jobs:
         run: |
           docker run --rm -v "${{ github.workspace }}:/repo" \
             zricethezav/gitleaks:latest detect \
-            --source /repo --no-banner --redact --verbose
+            --source /repo --no-banner --redact --verbose \
+            --config /repo/.gitleaks.toml
 
   backend:
     name: Backend

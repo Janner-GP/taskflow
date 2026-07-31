@@ -1,0 +1,7 @@
+title = "TaskFlow gitleaks config"
+
+[allowlist]
+  description = "Falsos positivos conocidos"
+  # Token de placeholder en el badge de CircleCI del boilerplate de NestJS.
+  # No es un secreto real — el string 'abc123def456' es el ejemplo oficial de NestJS.
+  regexes = ['''abc123def456''']

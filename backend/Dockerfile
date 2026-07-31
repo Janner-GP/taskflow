@@ -14,8 +14,12 @@ RUN npx prisma generate
 COPY . .
 RUN npm run build
 
-# Instala solo dependencias de producción en una carpeta aparte
-RUN npm ci --omit=dev --prefix /app/prod_modules
+# Instala solo dependencias de producción en una carpeta aparte.
+# npm ci con --prefix requiere que package.json y package-lock.json
+# existan dentro del prefix — los copiamos antes de ejecutarlo.
+RUN mkdir -p /app/prod_modules && \
+    cp package.json package-lock.json /app/prod_modules/ && \
+    npm ci --omit=dev --prefix /app/prod_modules
 
 # ---------------------------------------------------------------------------
 # Stage prod: imagen mínima de producción

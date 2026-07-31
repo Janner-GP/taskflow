@@ -155,9 +155,15 @@ export class TasksPage {
   protected async onSave(request: CreateTaskRequest | UpdateTaskRequest): Promise<void> {
     this.saving.set(true);
     const target = this.editing();
+    const formRef = this.taskFormRef();
+    const file = formRef?.attachmentFile() ?? null;
+
+    // Si el usuario marcó eliminar y no hay archivo nuevo, pedir al backend que borre el adjunto.
+    const shouldRemove =
+      !!target && (formRef?.removeExistingAttachment() ?? false) && !file;
 
     const outcome = target
-      ? await this.store.update(target.id, request)
+      ? await this.store.update(target.id, { ...request, removeAttachment: shouldRemove })
       : await this.store.create(request as CreateTaskRequest);
 
     this.saving.set(false);
@@ -167,8 +173,6 @@ export class TasksPage {
       return;
     }
 
-    // Si el usuario adjuntó un archivo, subirlo ahora que tenemos el id de la tarea.
-    const file = this.taskFormRef()?.attachmentFile() ?? null;
     const taskId = target ? target.id : outcome.taskId;
     if (file && taskId) {
       const uploadOutcome = await this.store.uploadAttachment(taskId, file);

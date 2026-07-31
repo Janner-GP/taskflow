@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsIn,
   IsInt,
   IsISO8601,
@@ -79,6 +80,11 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsIn(STATUSES, { message: 'status debe ser PENDING o COMPLETED' })
   status?: TaskStatus;
+
+  @ApiPropertyOptional({ description: 'Eliminar la imagen adjunta actual.' })
+  @IsOptional()
+  @IsBoolean()
+  removeAttachment?: boolean;
 }
 
 export class ListTasksQueryDto {

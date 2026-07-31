@@ -7,4 +7,5 @@ export interface StorageServicePort {
     ext: string,
   ): Promise<{ url: string; key: string }>;
   deleteIfOrphaned(key: string, currentTaskId: string): Promise<void>;
+  deleteByUrl(url: string, currentTaskId: string): Promise<void>;
 }

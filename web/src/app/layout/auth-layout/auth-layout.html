@@ -1,29 +1,49 @@
-<div class="relative flex min-h-screen flex-col">
-  <div class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-linear-to-b from-primary-500/10 to-transparent"></div>
+<div class="flex min-h-screen flex-col lg:flex-row">
 
-  <header class="relative flex items-center gap-3 px-6 py-5">
-    <span class="flex items-center gap-2 font-semibold tracking-tight">
-      <span class="grid size-8 place-items-center rounded-control bg-primary-600 text-primary-contrast">TF</span>
-      TaskFlow
-    </span>
+  <!-- Panel izquierdo — branding (solo desktop) -->
+  <div class="relative hidden overflow-hidden lg:flex lg:w-2/5 lg:flex-col"
+       style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 50%, #312e81 100%)">
+    <div class="pointer-events-none absolute -left-20 -top-20 size-72 rounded-full bg-white/5"></div>
+    <div class="pointer-events-none absolute -bottom-24 -right-16 size-96 rounded-full bg-white/5"></div>
+    <div class="pointer-events-none absolute right-12 top-1/4 size-40 rounded-full bg-white/5"></div>
 
-    <div class="ml-auto flex items-center gap-2">
-      <app-language-switcher />
-      <app-theme-toggle />
-    </div>
-  </header>
-
-  <main class="relative flex flex-1 items-center justify-center px-6 py-10">
-    <div class="w-full max-w-md">
-      <div
-        class="rounded-surface border border-surface bg-surface-0 p-8 shadow-soft sm:p-10 dark:bg-surface-900"
-      >
-        <router-outlet />
+    <div class="relative flex flex-1 flex-col items-center justify-center px-12 text-center">
+      <div class="grid size-16 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm">
+        <span class="text-2xl font-bold tracking-tight text-white">TF</span>
       </div>
+      <h1 class="mt-6 text-3xl font-bold tracking-tight text-white">TaskFlow</h1>
+      <p class="mt-4 max-w-xs text-base leading-relaxed text-indigo-200">
+        {{ 'auth.brand.line1' | translate }}<br>
+        {{ 'auth.brand.line2' | translate }}
+      </p>
     </div>
-  </main>
 
-  <footer class="relative px-6 py-6 text-center text-sm text-muted-color">
-    {{ 'shell.footer' | translate }}
-  </footer>
+    <p class="relative px-8 py-6 text-center text-xs text-indigo-300">
+      {{ 'shell.footer' | translate }}
+    </p>
+  </div>
+
+  <!-- Panel derecho — formulario -->
+  <div class="flex flex-1 flex-col bg-surface-50 dark:bg-surface-950">
+    <header class="flex items-center px-4 py-3 sm:px-6 sm:py-4">
+      <!-- Logo solo mobile -->
+      <a routerLink="/" class="flex items-center gap-2 font-semibold tracking-tight lg:hidden">
+        <span class="grid size-8 place-items-center rounded-control bg-primary-600 text-sm font-bold text-primary-contrast">TF</span>
+        <span>TaskFlow</span>
+      </a>
+      <div class="ml-auto flex items-center gap-2">
+        <app-language-switcher />
+        <app-theme-toggle />
+      </div>
+    </header>
+
+    <main class="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 sm:py-10">
+      <div class="w-full max-w-md">
+        <div class="rounded-surface border border-surface bg-surface-0 p-6 shadow-soft sm:p-8 lg:p-10 dark:bg-surface-900">
+          <router-outlet />
+        </div>
+      </div>
+    </main>
+  </div>
+
 </div>

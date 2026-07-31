@@ -182,6 +182,7 @@ export class TasksController {
       priority: dto.priority,
       dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
       status: dto.status,
+      removeAttachment: dto.removeAttachment,
     });
 
     return TaskDto.from(task);

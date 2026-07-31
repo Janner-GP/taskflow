@@ -80,23 +80,28 @@
         class="hidden"
       >
 
-      @if (attachmentFile()) {
-        <!-- Vista previa del archivo seleccionado -->
+      @if (hasPreview()) {
+        <!-- Vista previa: imagen existente o nueva selección -->
         <div class="relative w-full">
           <img
-            [src]="previewUrl()"
+            [src]="displayUrl()"
             alt="preview"
             class="mx-auto block max-h-36 rounded-lg object-cover shadow-sm ring-1 ring-surface-200 dark:ring-surface-700"
           >
           <button
             type="button"
             class="absolute right-2 top-2 grid size-6 place-items-center rounded-full bg-surface-900/70 text-white transition-colors hover:bg-surface-900"
+            [title]="'tasks.form.dropzone.remove' | translate"
             (click)="clearAttachment($event)"
           >
-            <span class="material-symbols-outlined text-sm leading-none" style="font-size:14px">close</span>
+            <span class="material-symbols-outlined leading-none" style="font-size:14px">close</span>
           </button>
         </div>
-        <p class="text-xs text-muted-color">{{ attachmentFile()!.name }}</p>
+        @if (attachmentFile()) {
+          <p class="text-xs text-muted-color">{{ attachmentFile()!.name }}</p>
+        } @else {
+          <p class="text-xs text-muted-color">{{ 'tasks.form.dropzone.clickToReplace' | translate }}</p>
+        }
 
       } @else {
         <!-- Estado vacío: instrucción de arrastre -->

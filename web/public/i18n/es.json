@@ -26,6 +26,10 @@
     }
   },
   "auth": {
+    "brand": {
+      "line1": "Organiza tu trabajo.",
+      "line2": "Mantén el foco en lo importante."
+    },
     "login": {
       "title": "Iniciar sesión",
       "subtitle": "Entra para gestionar tus tareas.",
@@ -119,6 +123,7 @@
         "title": "Arrastra una imagen aquí",
         "subtitle": "O haz clic para seleccionar · JPEG, PNG o WebP · máx. 5 MB",
         "remove": "Eliminar imagen",
+        "clickToReplace": "Haz clic para cambiar la imagen",
         "aria": "Zona de carga de imagen"
       },
       "errors": {

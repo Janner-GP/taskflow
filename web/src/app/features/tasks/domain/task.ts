@@ -78,4 +78,5 @@ export interface CreateTaskRequest {
 export type UpdateTaskRequest = Partial<Omit<CreateTaskRequest, 'priority'>> & {
   priority?: Priority;
   status?: TaskStatus;
+  removeAttachment?: boolean;
 };

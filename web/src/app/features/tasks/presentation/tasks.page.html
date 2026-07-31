@@ -11,7 +11,12 @@
       }
     </div>
 
-    <p-button icon="pi pi-plus" [label]="'tasks.newTask' | translate" (onClick)="openCreate()" />
+    <p-button
+      icon="pi pi-plus"
+      [label]="'tasks.newTask' | translate"
+      styleClass="new-task-btn"
+      (onClick)="openCreate()"
+    />
   </header>
 
   <p class="mt-1 text-muted-color">{{ 'tasks.subtitle' | translate }}</p>
@@ -32,7 +37,7 @@
     </p-iconfield>
 
     <p-select
-      styleClass="w-36"
+      styleClass="flex-1 min-w-0 sm:flex-none sm:w-36"
       appendTo="body"
       [options]="statusOptions"
       optionLabel="labelKey"
@@ -48,7 +53,7 @@
     </p-select>
 
     <p-select
-      styleClass="w-36"
+      styleClass="flex-1 min-w-0 sm:flex-none sm:w-36"
       appendTo="body"
       [options]="priorityOptions"
       optionLabel="labelKey"
@@ -163,7 +168,7 @@
               </p>
             </div>
 
-            <div class="flex shrink-0 gap-1">
+            <div class="flex shrink-0 gap-0.5 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
               <p-button
                 icon="pi pi-pencil"
                 severity="secondary"

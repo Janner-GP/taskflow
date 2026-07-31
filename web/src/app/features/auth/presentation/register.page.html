@@ -1,15 +1,21 @@
-<header class="mb-8">
-  <h1 class="text-2xl font-semibold tracking-tight">{{ 'auth.register.title' | translate }}</h1>
-  <p class="mt-1 text-sm text-muted-color">{{ 'auth.register.subtitle' | translate }}</p>
+<header class="mb-8 flex flex-col gap-4">
+  <div class="grid size-11 place-items-center rounded-xl bg-primary-50 ring-1 ring-primary-100 dark:bg-primary-950/60 dark:ring-primary-900/60">
+    <span class="material-symbols-outlined text-primary-600 dark:text-primary-400" style="font-size:22px">person_add</span>
+  </div>
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight">{{ 'auth.register.title' | translate }}</h1>
+    <p class="mt-1.5 text-sm leading-relaxed text-muted-color">{{ 'auth.register.subtitle' | translate }}</p>
+  </div>
 </header>
 
 @if (errorMessage(); as message) {
-  <p
+  <div
     role="alert"
-    class="mb-6 rounded-control border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300"
+    class="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900/60 dark:bg-red-950/40"
   >
-    {{ message | translate }}
-  </p>
+    <span class="material-symbols-outlined mt-0.5 shrink-0 text-red-500 dark:text-red-400" style="font-size:18px">error</span>
+    <p class="text-sm text-red-700 dark:text-red-300">{{ message | translate }}</p>
+  </div>
 }
 
 <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">

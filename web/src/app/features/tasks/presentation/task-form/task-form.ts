@@ -37,6 +37,7 @@ const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 })
 export class TaskForm {
   private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   task = input<Task | null>(null);
   saving = input(false);
@@ -44,14 +45,25 @@ export class TaskForm {
   save = output<CreateTaskRequest | UpdateTaskRequest>();
   cancelled = output<void>();
 
-  private readonly fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
-
   readonly attachmentFile = signal<File | null>(null);
+  readonly removeExistingAttachment = signal(false);
   readonly isDragOver = signal(false);
+
+  protected readonly existingUrl = computed(() => this.task()?.attachmentUrl ?? null);
 
   protected readonly previewUrl = computed(() => {
     const f = this.attachmentFile();
     return f ? URL.createObjectURL(f) : null;
+  });
+
+  protected readonly hasPreview = computed(() =>
+    !!this.attachmentFile() || (!!this.existingUrl() && !this.removeExistingAttachment()),
+  );
+
+  protected readonly displayUrl = computed(() => {
+    if (this.attachmentFile()) return this.previewUrl();
+    if (!this.removeExistingAttachment()) return this.existingUrl();
+    return null;
   });
 
   protected readonly dropzoneClass = computed(() => {
@@ -101,6 +113,7 @@ export class TaskForm {
       });
       this.attachmentFile.set(null);
       this.isDragOver.set(false);
+      this.removeExistingAttachment.set(false);
     });
   }
 
@@ -109,14 +122,19 @@ export class TaskForm {
     this.form.reset({ title: '', description: '', priority: 'MEDIUM', dueDate: null });
     this.attachmentFile.set(null);
     this.isDragOver.set(false);
+    this.removeExistingAttachment.set(false);
+  }
+
+  protected onDropzoneClick(): void {
+    this.fileInputRef()?.nativeElement.click();
   }
 
   protected onFileChange(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
     if (file && ACCEPTED_TYPES.includes(file.type)) {
       this.attachmentFile.set(file);
+      this.removeExistingAttachment.set(false);
     }
-    // Reset el input para que volver a seleccionar el mismo archivo dispare el evento
     (event.target as HTMLInputElement).value = '';
   }
 
@@ -128,7 +146,6 @@ export class TaskForm {
 
   protected onDragLeave(event: DragEvent): void {
     event.stopPropagation();
-    // Solo desactivar si el cursor sale fuera del drop zone, no al moverse entre hijos
     const target = event.currentTarget as HTMLElement;
     if (!target.contains(event.relatedTarget as Node)) {
       this.isDragOver.set(false);
@@ -142,19 +159,20 @@ export class TaskForm {
     const file = event.dataTransfer?.files?.[0] ?? null;
     if (file && ACCEPTED_TYPES.includes(file.type)) {
       this.attachmentFile.set(file);
-    }
-  }
-
-  protected onDropzoneClick(): void {
-    if (!this.attachmentFile()) {
-      this.fileInputRef()?.nativeElement.click();
+      this.removeExistingAttachment.set(false);
     }
   }
 
   protected clearAttachment(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.attachmentFile.set(null);
+    if (this.attachmentFile()) {
+      // Cancela la selección local; si había URL existente, vuelve a mostrarse
+      this.attachmentFile.set(null);
+    } else {
+      // Solo había URL existente: marcarla para eliminar
+      this.removeExistingAttachment.set(true);
+    }
   }
 
   protected submit(): void {

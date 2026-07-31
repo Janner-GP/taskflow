@@ -26,6 +26,10 @@
     }
   },
   "auth": {
+    "brand": {
+      "line1": "Organize your work.",
+      "line2": "Stay focused on what matters."
+    },
     "login": {
       "title": "Sign in",
       "subtitle": "Sign in to manage your tasks.",
@@ -119,6 +123,7 @@
         "title": "Drop an image here",
         "subtitle": "Or click to select · JPEG, PNG or WebP · max 5 MB",
         "remove": "Remove image",
+        "clickToReplace": "Click to replace the image",
         "aria": "Image upload area"
       },
       "errors": {

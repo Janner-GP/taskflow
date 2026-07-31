@@ -65,6 +65,15 @@ export class S3StorageService implements StorageServicePort {
     return { url, key };
   }
 
+  async deleteByUrl(url: string, currentTaskId: string): Promise<void> {
+    try {
+      const key = new URL(url).pathname.slice(1);
+      await this.deleteIfOrphaned(key, currentTaskId);
+    } catch {
+      // URL inválida — ignorar
+    }
+  }
+
   async deleteIfOrphaned(key: string, currentTaskId: string): Promise<void> {
     const url = `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 

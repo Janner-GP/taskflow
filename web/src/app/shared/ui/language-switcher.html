@@ -1,10 +1,11 @@
-<p-select
-  [options]="languages"
-  [ngModel]="current()"
-  (ngModelChange)="use($event)"
-  optionLabel="label"
-  optionValue="value"
-  size="small"
-  styleClass="w-32"
-  appendTo="body"
-/>
+<div class="flex gap-0.5 rounded-lg bg-surface-100 p-0.5 dark:bg-surface-800" role="group" aria-label="Language">
+  @for (lang of languages; track lang) {
+    <button
+      type="button"
+      [class]="langClass(lang)"
+      (click)="use(lang)"
+    >
+      {{ lang.toUpperCase() }}
+    </button>
+  }
+</div>

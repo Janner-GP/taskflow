@@ -1,3 +1,14 @@
 :host {
   display: block;
+
+  /* Hide New Task label on mobile (icon only) */
+  ::ng-deep .new-task-btn .p-button-label {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    ::ng-deep .new-task-btn .p-button-label {
+      display: inline;
+    }
+  }
 }

@@ -26,7 +26,11 @@ export class PrismaService
     const urlObj = new URL(rawUrl);
     urlObj.searchParams.delete('schema');
     if (config.get('NODE_ENV', { infer: true }) === 'production') {
+      // sslmode=require + uselibpqcompat=true → encripta sin verificar el
+      // certificado. Con solo sslmode=require esta versión de pg-connection-string
+      // lo trata como verify-full, lo que falla con el cert de RDS (AWS CA).
       urlObj.searchParams.set('sslmode', 'require');
+      urlObj.searchParams.set('uselibpqcompat', 'true');
     }
     super({
       adapter: new PrismaPg({ connectionString: urlObj.toString() }),
